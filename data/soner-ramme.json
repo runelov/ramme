@@ -1,0 +1,41 @@
+[
+  {
+    "id": "tunet",
+    "navn": "Tunet / gårdsplassen",
+    "placeholder": true,
+    "notat": "PLACEHOLDER — grov firkant rundt et antatt sentrum av tunet, IKKE en oppmålt eiendomsgrense. Faktiske sonegrenser krever befaring/produkteier, se veien-videre.md 'Endelig sonedefinisjon for Rammevandrer-badgen'. Ikke fremstill dette som endelig.",
+    "polygon": [
+      [59.5990, 10.6545],
+      [59.5990, 10.6561],
+      [59.5980, 10.6561],
+      [59.5980, 10.6545],
+      [59.5990, 10.6545]
+    ]
+  },
+  {
+    "id": "havlystparken",
+    "navn": "Havlystparken",
+    "placeholder": true,
+    "notat": "PLACEHOLDER — grov firkant vest for tunet, IKKE en oppmålt parkgrense. Se veien-videre.md.",
+    "polygon": [
+      [59.6000, 10.6480],
+      [59.6000, 10.6545],
+      [59.5975, 10.6545],
+      [59.5975, 10.6480],
+      [59.6000, 10.6480]
+    ]
+  },
+  {
+    "id": "strandsonen",
+    "navn": "Strandsonen",
+    "placeholder": true,
+    "notat": "PLACEHOLDER — grov firkant sør/øst for tunet mot fjorden, IKKE en oppmålt strandlinje. Se veien-videre.md.",
+    "polygon": [
+      [59.5980, 10.6545],
+      [59.5980, 10.6610],
+      [59.5955, 10.6610],
+      [59.5955, 10.6545],
+      [59.5980, 10.6545]
+    ]
+  }
+]

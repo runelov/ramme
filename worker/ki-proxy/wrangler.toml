@@ -1,0 +1,24 @@
+name = "ramme-ki-proxy"
+main = "src/index.js"
+compatibility_date = "2026-08-28"
+
+# Ingen custom_domain — egen, uavhengig *.workers.dev-subdomene (ADR 2/ADR 3
+# i arkitektur.md), IKKE ki.bondoya.no og IKKE et kjøpt domene.
+
+[vars]
+ANTHROPIC_MODEL = "claude-sonnet-5"
+# Rammes egen frontend-opphav (GitHub Pages default-domene) — PLACEHOLDER,
+# bytt før deploy. Denne workeren kalles av worker/api (server-til-server),
+# ikke direkte av nettleseren, men CORS-headeren settes likevel korrekt.
+ALLOWED_ORIGIN = "https://<SETT_INN_BRUKERNAVN>.github.io"
+
+# ANTHROPIC_API_KEY, APP_SHARED_SECRET, ARTSORAKEL_ENDPOINT og
+# ARTSORAKEL_TOKEN settes IKKE her — sett dem med:
+#   wrangler secret put ANTHROPIC_API_KEY
+#   wrangler secret put APP_SHARED_SECRET
+#   wrangler secret put ARTSORAKEL_ENDPOINT   (produksjon: https://ai.artsdatabanken.no/identify)
+#   wrangler secret put ARTSORAKEL_TOKEN
+# aldri i denne filen. APP_SHARED_SECRET må matche worker/api sin
+# KI_PROXY_SHARED_SECRET. Se .dev.vars.example for lokal utvikling — ALDRI
+# produksjonstokenet fra Artsdatabanken i .dev.vars, kun testendepunktet
+# (ai.test.artsdatabanken.no), se Bondøyas ki-proxy-README for regelen.

@@ -1,0 +1,47 @@
+name = "ramme-api"
+main = "src/index.js"
+compatibility_date = "2026-08-28"
+
+# Ingen custom_domain — Ramme kjører på GitHub Pages default-domene, ikke et
+# kjøpt domene (se arkitektur.md ADR 2). Dette API-et kjører derfor på
+# Cloudflares default *.workers.dev-subdomene i stedet for et kjøpt
+# subdomene. IKKE legg til en `routes = [...]`-blokk her med mindre
+# domenevalget reverseres på nytt (usannsynlig, se ADR 2, men beholdt som en
+# eksplisitt fraværende ting, ikke bare glemt).
+
+# PLACEHOLDER — sett til den faktiske database_id-en `wrangler d1 create
+# ramme` gir deg. IKKE en ekte D1-ressurs er opprettet av denne
+# implementasjonen (se oppdragets harde grenser).
+[[d1_databases]]
+binding = "DB"
+database_name = "ramme"
+database_id = "<SETT_INN_VED_DEPLOY>"
+
+# PLACEHOLDER — sett til den faktiske id-en `wrangler kv namespace create
+# RATE_LIMIT` gir deg.
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "<SETT_INN_VED_DEPLOY>"
+
+[[r2_buckets]]
+binding = "IMAGES"
+bucket_name = "ramme-bilder"
+
+[vars]
+# Frontendens faktiske opphav (GitHub Pages default-domene) — brukt i CORS
+# (Access-Control-Allow-Origin) og i sjekkOpprinnelse()-CSRF-sjekken på
+# muterende ruter, se lib/cors.js. PLACEHOLDER — bytt til den faktiske
+# `https://<bruker>.github.io`-verdien (uten sti) før deploy.
+ALLOWED_ORIGIN = "https://<SETT_INN_BRUKERNAVN>.github.io"
+ENVIRONMENT = "production"
+
+# Rammes egen, uavhengige KI-proxy-Worker sin URL (ADR 3 — IKKE
+# ki.bondoya.no). PLACEHOLDER — bytt til den faktiske *.workers.dev-URL-en
+# etter at worker/ki-proxy er deployet.
+KI_PROXY_URL = "https://<SETT_INN_VED_DEPLOY>.workers.dev"
+
+# INVITASJONSKODE, KI_PROXY_SHARED_SECRET settes IKKE her — sett dem med:
+#   wrangler secret put INVITASJONSKODE
+#   wrangler secret put KI_PROXY_SHARED_SECRET
+# aldri i denne filen eller noe annet sted i det offentlige repoet. Se
+# .dev.vars.example for lokal utvikling.

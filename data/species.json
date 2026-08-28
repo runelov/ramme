@@ -1,0 +1,508 @@
+[
+  {
+    "norsk": "Kjøttmeis",
+    "latinsk": "Parus major",
+    "artstype": "fugl",
+    "taxonId": 203653,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/203653",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Blåmeis",
+    "latinsk": "Cyanistes caeruleus",
+    "artstype": "fugl",
+    "taxonId": 203652,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/203652",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Skjære",
+    "latinsk": "Pica pica",
+    "artstype": "fugl",
+    "taxonId": 4100,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/4100",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Svarttrost",
+    "latinsk": "Turdus merula",
+    "artstype": "fugl",
+    "taxonId": 203723,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/203723",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Ringdue",
+    "latinsk": "Columba palumbus",
+    "artstype": "fugl",
+    "taxonId": 203507,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/203507",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Rødstrupe",
+    "latinsk": "Erithacus rubecula",
+    "artstype": "fugl",
+    "taxonId": 203728,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/203728",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Stokkand",
+    "latinsk": "Anas platyrhynchos",
+    "artstype": "fugl",
+    "taxonId": 203471,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/203471",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Knoppsvane",
+    "latinsk": "Cygnus olor",
+    "artstype": "fugl",
+    "taxonId": 3473,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/3473",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Storskarv",
+    "latinsk": "Phalacrocorax carbo",
+    "artstype": "fugl",
+    "taxonId": 3863,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/3863",
+    "rodlisteNorge": "NT",
+    "synligForPublic": false
+  },
+  {
+    "norsk": "Ærfugl",
+    "latinsk": "Somateria mollissima",
+    "artstype": "fugl",
+    "taxonId": 3491,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/3491",
+    "rodlisteNorge": "VU",
+    "synligForPublic": false
+  },
+  {
+    "norsk": "Gråmåke",
+    "latinsk": "Larus argentatus",
+    "artstype": "fugl",
+    "taxonId": 3624,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/3624",
+    "rodlisteNorge": "VU",
+    "synligForPublic": false
+  },
+  {
+    "norsk": "Fiskemåke",
+    "latinsk": "Larus canus",
+    "artstype": "fugl",
+    "taxonId": 3628,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/3628",
+    "rodlisteNorge": "VU",
+    "synligForPublic": false
+  },
+  {
+    "norsk": "Tjeld",
+    "latinsk": "Haematopus ostralegus",
+    "artstype": "fugl",
+    "taxonId": 203529,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/203529",
+    "rodlisteNorge": "NT",
+    "synligForPublic": false
+  },
+  {
+    "norsk": "Hettemåke",
+    "latinsk": "Chroicocephalus ridibundus",
+    "artstype": "fugl",
+    "taxonId": 3620,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/3620",
+    "rodlisteNorge": "CR",
+    "synligForPublic": false
+  },
+  {
+    "norsk": "Havørn",
+    "latinsk": "Haliaeetus albicilla",
+    "artstype": "fugl",
+    "taxonId": 3815,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/3815",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Trane",
+    "latinsk": "Grus grus",
+    "artstype": "fugl",
+    "taxonId": 203523,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/203523",
+    "rodlisteNorge": null,
+    "synligForPublic": true,
+    "notat": "Sees oftest i store trekkflokker i september"
+  },
+  {
+    "norsk": "Sanglerke",
+    "latinsk": "Alauda arvensis",
+    "artstype": "fugl",
+    "taxonId": 203657,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/203657",
+    "rodlisteNorge": "NT",
+    "synligForPublic": false,
+    "notat": "Trekkfugl — usikkert bonusfunn i september"
+  },
+  {
+    "norsk": "Fiskeørn",
+    "latinsk": "Pandion haliaetus",
+    "artstype": "fugl",
+    "taxonId": 203588,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/203588",
+    "rodlisteNorge": "VU",
+    "synligForPublic": false,
+    "notat": "Trekkfugl — usikkert bonusfunn i september"
+  },
+  {
+    "norsk": "Vipe",
+    "latinsk": "Vanellus vanellus",
+    "artstype": "fugl",
+    "taxonId": 3604,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/3604",
+    "rodlisteNorge": "CR",
+    "synligForPublic": false,
+    "notat": "Trekkfugl — usikkert bonusfunn i september"
+  },
+  {
+    "norsk": "Steinkobbe",
+    "latinsk": "Phoca vitulina",
+    "artstype": "sjøpattedyr",
+    "taxonId": 31199,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/31199",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Nise",
+    "latinsk": "Phocoena phocoena",
+    "artstype": "sjøpattedyr",
+    "taxonId": 31318,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/31318",
+    "rodlisteNorge": null,
+    "synligForPublic": true,
+    "notat": "Sporadisk i indre Oslofjord — bonusfunn"
+  },
+  {
+    "norsk": "Rådyr",
+    "latinsk": "Capreolus capreolus",
+    "artstype": "pattedyr",
+    "taxonId": 31244,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/31244",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Rødrev",
+    "latinsk": "Vulpes vulpes",
+    "artstype": "pattedyr",
+    "taxonId": 31176,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/31176",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Grevling",
+    "latinsk": "Meles meles",
+    "artstype": "pattedyr",
+    "taxonId": 31217,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/31217",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Piggsvin",
+    "latinsk": "Erinaceus europaeus",
+    "artstype": "pattedyr",
+    "taxonId": 31113,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/31113",
+    "rodlisteNorge": "NT",
+    "synligForPublic": false
+  },
+  {
+    "norsk": "Ekorn",
+    "latinsk": "Sciurus vulgaris",
+    "artstype": "pattedyr",
+    "taxonId": 31047,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/31047",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Dvergflaggermus",
+    "latinsk": "Pipistrellus pygmaeus",
+    "artstype": "pattedyr",
+    "taxonId": 31137,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/31137",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Nordflaggermus",
+    "latinsk": "Eptesicus nilssonii",
+    "artstype": "pattedyr",
+    "taxonId": 31130,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/31130",
+    "rodlisteNorge": "VU",
+    "synligForPublic": false
+  },
+  {
+    "norsk": "Storsalamander",
+    "latinsk": "Triturus cristatus",
+    "artstype": "amfibium",
+    "taxonId": 1585,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/1585",
+    "rodlisteNorge": "NT",
+    "synligForPublic": false,
+    "notat": "Lav sannsynlighet i september (post-hekkesesong)"
+  },
+  {
+    "norsk": "Småsalamander",
+    "latinsk": "Lissotriton vulgaris",
+    "artstype": "amfibium",
+    "taxonId": 92946,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/92946",
+    "rodlisteNorge": null,
+    "synligForPublic": true,
+    "notat": "Lav sannsynlighet i september (post-hekkesesong)"
+  },
+  {
+    "norsk": "Admiral",
+    "latinsk": "Vanessa atalanta",
+    "artstype": "insekt",
+    "taxonId": 29849,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/29849",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Neslesommerfugl",
+    "latinsk": "Aglais urticae",
+    "artstype": "insekt",
+    "taxonId": 29854,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/29854",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Sitronsommerfugl",
+    "latinsk": "Gonepteryx rhamni",
+    "artstype": "insekt",
+    "taxonId": 29783,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/29783",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Dagpåfugløye",
+    "latinsk": "Aglais io",
+    "artstype": "insekt",
+    "taxonId": 29852,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/29852",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Tiriltungeblåvinge",
+    "latinsk": "Polyommatus icarus",
+    "artstype": "insekt",
+    "taxonId": 29810,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/29810",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Åkerhumle",
+    "latinsk": "Bombus pascuorum",
+    "artstype": "insekt",
+    "taxonId": 77980,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/77980",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Markhumle",
+    "latinsk": "Bombus pratorum",
+    "artstype": "insekt",
+    "taxonId": 77982,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/77982",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Kantarell",
+    "latinsk": "Cantharellus cibarius",
+    "artstype": "sopp",
+    "taxonId": 160585,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/160585",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Traktkantarell",
+    "latinsk": "Craterellus tubaeformis",
+    "artstype": "sopp",
+    "taxonId": 39039,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/39039",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Knuskkjuke",
+    "latinsk": "Fomes fomentarius",
+    "artstype": "sopp",
+    "taxonId": 40029,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/40029",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Rød fluesopp",
+    "latinsk": "Amanita muscaria",
+    "artstype": "sopp",
+    "taxonId": 199186,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/199186",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Rogn",
+    "latinsk": "Sorbus aucuparia",
+    "artstype": "plante",
+    "taxonId": 137885,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/137885",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Hassel",
+    "latinsk": "Corylus avellana",
+    "artstype": "plante",
+    "taxonId": 62110,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/62110",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Ask",
+    "latinsk": "Fraxinus excelsior",
+    "artstype": "plante",
+    "taxonId": 62369,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/62369",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Sommereik",
+    "latinsk": "Quercus robur",
+    "artstype": "plante",
+    "taxonId": 136135,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/136135",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Furu",
+    "latinsk": "Pinus sylvestris",
+    "artstype": "plante",
+    "taxonId": 135419,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/135419",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Gran",
+    "latinsk": "Picea abies",
+    "artstype": "plante",
+    "taxonId": 144820,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/144820",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Selje",
+    "latinsk": "Salix caprea",
+    "artstype": "plante",
+    "taxonId": 62619,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/62619",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Ryllik",
+    "latinsk": "Achillea millefolium",
+    "artstype": "plante",
+    "taxonId": 145524,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/145524",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Stornesle",
+    "latinsk": "Urtica dioica",
+    "artstype": "plante",
+    "taxonId": 63498,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/63498",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Blåbær",
+    "latinsk": "Vaccinium myrtillus",
+    "artstype": "plante",
+    "taxonId": 138625,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/138625",
+    "rodlisteNorge": null,
+    "synligForPublic": true
+  },
+  {
+    "norsk": "Kanadagullris",
+    "latinsk": "Solidago canadensis",
+    "artstype": "plante",
+    "taxonId": 60776,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/60776",
+    "rodlisteNorge": null,
+    "synligForPublic": true,
+    "fremmedart": "SE"
+  },
+  {
+    "norsk": "Kjempespringfrø",
+    "latinsk": "Impatiens glandulifera",
+    "artstype": "plante",
+    "taxonId": 133820,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/133820",
+    "rodlisteNorge": null,
+    "synligForPublic": true,
+    "fremmedart": "SE"
+  },
+  {
+    "norsk": "Rynkerose",
+    "latinsk": "Rosa rugosa",
+    "artstype": "plante",
+    "taxonId": 63363,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/63363",
+    "rodlisteNorge": null,
+    "synligForPublic": true,
+    "fremmedart": "SE"
+  },
+  {
+    "norsk": "Hagelupin",
+    "latinsk": "Lupinus polyphyllus",
+    "artstype": "plante",
+    "taxonId": 61942,
+    "artskartUrl": "https://artskart.artsdatabanken.no/#taxon/61942",
+    "rodlisteNorge": null,
+    "synligForPublic": true,
+    "fremmedart": "SE"
+  }
+]

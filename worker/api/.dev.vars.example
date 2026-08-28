@@ -1,0 +1,20 @@
+# Kopier til .dev.vars (gitignored) for lokal `wrangler dev` — ALDRI ekte
+# verdier i denne filen, kun placeholdere/eksempler. `wrangler dev` leser
+# .dev.vars automatisk; produksjonsverdier settes separat med
+# `wrangler secret put <NAVN>`, aldri her.
+
+# Delt invitasjonskode (ADR 11 i arkitektur.md) — samme kode til alle 15-20
+# deltakerne, distribueres utenfor appen (muntlig/Slack/QR-kode). I
+# produksjon: en lang, tilfeldig streng (f.eks. `openssl rand -hex 16`), IKKE
+# noe gjettbart som "ramme2026".
+INVITASJONSKODE=<SETT_INN_VED_DEPLOY>
+
+# Delt hemmelighet mot Rammes egen worker/ki-proxy (samme mønster som
+# APP_SHARED_SECRET der) — generer f.eks. med `openssl rand -hex 32`, samme
+# verdi må settes i worker/ki-proxy sin APP_SHARED_SECRET.
+KI_PROXY_SHARED_SECRET=<SETT_INN_VED_DEPLOY>
+
+# Lokalt: peker mot en lokal `wrangler dev`-instans av worker/ki-proxy
+# (typisk http://localhost:8788 e.l. — se README "Kjøre lokalt"). I
+# [vars] i wrangler.toml settes produksjonsverdien i stedet.
+KI_PROXY_URL=http://localhost:8788

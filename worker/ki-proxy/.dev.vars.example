@@ -1,0 +1,10 @@
+# Kopier til .dev.vars (gitignored) for lokal `wrangler dev`. ALDRI ekte
+# nøkler her.
+
+ANTHROPIC_API_KEY=<SETT_INN_VED_DEPLOY>
+APP_SHARED_SECRET=<SETT_INN_VED_DEPLOY_MA_MATCHE_WORKER_API>
+
+# Valgfrie — uten dem hopper Workeren over Artsorakel og kjører ren Claude.
+# ALDRI produksjonsendepunktet/-tokenet her — kun testendepunktet:
+ARTSORAKEL_ENDPOINT=https://ai.test.artsdatabanken.no/identify
+ARTSORAKEL_TOKEN=<SETT_INN_TESTTOKEN_HVIS_TILGJENGELIG>
