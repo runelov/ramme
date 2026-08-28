@@ -78,8 +78,10 @@ export async function registrer({ request, env }) {
 
     // loggInnEksisterende
     const sesjonToken = await opprettSesjon(eksisterende.id, env);
+    // sesjonToken i BODY-en er nå primær (se lib/session.js "OPPDATERT
+    // 2026-08-28") — Set-Cookie beholdes som uskadelig sekundærforsøk.
     return json(
-      { kortnavn: eksisterende.kortnavn, rolle: eksisterende.rolle },
+      { kortnavn: eksisterende.kortnavn, rolle: eksisterende.rolle, sesjonToken },
       200,
       { 'Set-Cookie': sesjonCookieHeader(sesjonToken), ...cors }
     );
@@ -105,7 +107,7 @@ export async function registrer({ request, env }) {
 
   const sesjonToken = await opprettSesjon(rad.id, env);
   return json(
-    { kortnavn: rad.kortnavn, rolle: rad.rolle },
+    { kortnavn: rad.kortnavn, rolle: rad.rolle, sesjonToken },
     201,
     { 'Set-Cookie': sesjonCookieHeader(sesjonToken), ...cors }
   );

@@ -5,6 +5,39 @@ Versjonsnummereringen starter på nytt fra `0.1.0` her — Ramme er en egen,
 uavhengig repo-historie fra forgreningstidspunktet, følger ikke videre på
 Bondøyas løpende versjonsnummer (se CLAUDE.md).
 
+## 0.1.11 — Kritisk: sesjonscookien virket ikke på mobil (Safari blokkerer cross-site-cookier)
+
+Produkteier rapporterte 401 på `/funn` ved oppstart og mislykket
+KI-artsgjenkjenning — kun på mobil (både standalone-PWA og mobil-Safari),
+ikke på Mac. Se `arkitektur.md` ADR 15 for full rotårsaksanalyse.
+
+**Rotårsak**: nøyaktig risikoen ADR 2 skrev inn som "kjent, bevisst
+akseptert" og aldri fikk den varslede testrunden før nå. Safari (mobil og
+standalone-PWA, begge WebKit) blokkerer alle cross-site-cookier
+("Full Third-Party Cookie Blocking", Safari 13.1+/iOS 13.4+) uansett
+`SameSite`-verdi. Innlogging så likevel ut til å lykkes fordi
+`js/app.js` satte brukerstatus fra JSON-svaret, ikke fra cookien — først
+neste kall som faktisk krevde den (aldri lagrede) cookien ga 401.
+
+**Fiks**: `Authorization: Bearer <token>`-header er nå primær
+sesjonsmekanisme:
+- `POST /auth/registrer` returnerer nå `sesjonToken` i JSON-body-en, i
+  tillegg til (ikke i stedet for) `Set-Cookie`.
+- `js/api-client.js` lagrer tokenet i `localStorage`, sender det som
+  `Authorization`-header på hvert kall, og plukker opp rullerte tokens fra
+  en ny `X-Sesjon-Token`-responsheader.
+- Bilde-visning (`<img src>`, kan ikke sette headere) sender tokenet som
+  `?t=`-query-param i stedet — bevisst avveining (token i URL-logger) for
+  et kortvarig, invitasjonsbeskyttet seminarverktøy.
+- `Access-Control-Allow-Headers`/`-Expose-Headers` i `lib/cors.js` utvidet
+  tilsvarende. `sjekkOpprinnelse()`-CSRF-sjekken er uendret.
+
+Verifisert lokalt (`wrangler dev`+`curl`, uten cookie-jar — simulerer
+Safaris blokkering direkte): header-only auth gir 200, ingen token gir
+401, bilde-query-param autentiserer riktig, Origin-CSRF-sjekken uendret.
+**Ikke** verifisert i ekte iOS Safari/PWA-standalone ennå — se
+`veien-videre.md`.
+
 ## 0.1.10 — Nytt appikon: løktårnet med torvtak
 
 Erstattet appikonet (`icons/icon-16/32/180/192/512.png`, `favicon.ico`) —

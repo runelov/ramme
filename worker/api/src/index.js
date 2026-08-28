@@ -58,18 +58,25 @@ export default {
       console.error(e);
       res = json({ error: 'Uventet feil.' }, 500, cors);
     }
-    return leggTilRullertSesjonCookie(request, env, res);
+    return leggTilRullertSesjon(request, env, res);
   },
 };
 
-// Periodisk sesjonstoken-rotasjon (se lib/session.js) — sentralt her,
-// portert uendret fra Bondøya/FungiFinder.
-async function leggTilRullertSesjonCookie(request, env, response) {
+// Periodisk sesjonstoken-rotasjon (se lib/session.js) — mekanikken portert
+// uendret fra Bondøya/FungiFinder, MEN siden Authorization-header nå er
+// primær innloggingsvei (se lib/session.js "OPPDATERT 2026-08-28") holder
+// det ikke å bare sende en ny Set-Cookie lenger — klienten leser ikke den
+// cookien. Nytt token leveres derfor OGSÅ som X-Sesjon-Token-header
+// (eksponert via Access-Control-Expose-Headers, se lib/cors.js), som
+// js/api-client.js sin kall() plukker opp og lagrer i localStorage etter
+// HVERT kall.
+async function leggTilRullertSesjon(request, env, response) {
   const rullert = await rullerSesjonHvisNodvendig(request, env);
   if (!rullert) return response;
 
   const maxAgeSekunder = (rullert.utloper - Date.now()) / 1000;
   const headers = new Headers(response.headers);
   headers.append('Set-Cookie', sesjonCookieHeader(rullert.token, maxAgeSekunder));
+  headers.set('X-Sesjon-Token', rullert.token);
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }

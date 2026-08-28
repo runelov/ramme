@@ -135,9 +135,18 @@ som IKKE skal leses som ferdig avklart av denne implementasjonen:
 - **Manuell verifisering før seminaret** (ikke dekket av `node:test`, se
   CLAUDE.md "Test-strategi"): leaderboardets `EXISTS`-filter og
   "X/Y har registrert"-telleren mot en ekte D1-populasjon, A2HS-
-  sekvenseringen i faktisk nettleser (inkl. iOS Safari/PWA-standalone),
-  auth-/PIN-flytens faktiske D1-/KV-I/O (gjenoppretting på ny enhet, den
-  tvetydige feilmeldingen, faktisk utløst rate-limiting).
+  sekvenseringen i faktisk nettleser, auth-/PIN-flytens faktiske D1-/KV-I/O
+  (gjenoppretting på ny enhet, den tvetydige feilmeldingen, faktisk utløst
+  rate-limiting).
+  - **iOS Safari/PWA-standalone ble faktisk testet (2026-08-28) og feilet**:
+    `SameSite=None`-cookien blokkeres av Safaris "Full Third-Party Cookie
+    Blocking" — 401 på `/funn`/`/ki/gjenkjenn` på mobil selv om innlogging
+    så ut til å lykkes. Rettet med `Authorization: Bearer`-header som
+    primær sesjonsmekanisme i stedet for cookien (token i `localStorage`,
+    se `lib/session.js` "OPPDATERT 2026-08-28" og CHANGELOG.md). Verifisert
+    lokalt med `curl` (header-only auth uten cookie gir 200, ikke 401) —
+    **fortsatt ikke verifisert i ekte iOS Safari/PWA-standalone**, gjør det
+    før seminaret.
 - **`npm audit`** — kjør rett etter `npm install` i begge worker-mappene,
   før første deploy (ny, separat `node_modules`-installasjon er ikke
   dekket av noen tidligere audit).

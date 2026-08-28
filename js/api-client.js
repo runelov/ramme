@@ -4,12 +4,47 @@
 // worker/api/src/routes/auth.js) — ikke beOmLenke()/verifiser(). Lokalt
 // (127.0.0.1/localhost) pekes det mot `wrangler dev` sin port i stedet for
 // produksjons-URL-en.
+//
+// OPPDATERT 2026-08-28 — sesjonen er IKKE lenger (kun) en cookie. Safari
+// (mobil-Safari og standalone-PWA) blokkerer cross-site-cookien (SameSite=
+// None) helt, uansett — se worker/api/src/lib/session.js "OPPDATERT
+// 2026-08-28" for hele forklaringen. `Authorization: Bearer <token>` er nå
+// primær vei: tokenet kommer tilbake i BODY-en fra /auth/registrer (og i
+// en X-Sesjon-Token-header på hvert påfølgende kall ved rotasjon), lagres i
+// localStorage, og legges på hver forespørsel her i kall(). `credentials:
+// 'include'` beholdes uendret — uskadelig, og lar cookien fortsatt fungere
+// som sekundærforsøk i nettlesere der den faktisk lagres.
 const API_BASE = ['localhost', '127.0.0.1'].includes(location.hostname)
   ? 'http://localhost:8787'
   : 'https://ramme-api.bondoya.workers.dev'; // PLACEHOLDER — se README.md
 
+const TOKEN_NOKKEL = 'ramme_sesjon_token';
+
+// localStorage kan kaste (privat nettlesing/full lagring på enkelte
+// nettlesere) — appen fungerer da fortsatt, bare uten bearer-token-
+// mekanismen (samme risikonivå som cookie-only-varianten hadde uansett).
+function hentLagretToken() {
+  try { return localStorage.getItem(TOKEN_NOKKEL); } catch { return null; }
+}
+function lagreToken(token) {
+  try {
+    if (token) localStorage.setItem(TOKEN_NOKKEL, token);
+    else localStorage.removeItem(TOKEN_NOKKEL);
+  } catch { /* se kommentar over */ }
+}
+
 async function kall(sti, opts) {
-  const res = await fetch(`${API_BASE}${sti}`, { credentials: 'include', ...opts });
+  const headers = new Headers((opts && opts.headers) || {});
+  const token = hentLagretToken();
+  if (token) headers.set('Authorization', `Bearer ${token}`);
+
+  const res = await fetch(`${API_BASE}${sti}`, { credentials: 'include', ...opts, headers });
+
+  // Sesjonstoken-rotasjon (worker/api/src/index.js) — plukk opp et evt.
+  // rullert token på HVERT kall, ikke bare ved innlogging.
+  const rullertToken = res.headers.get('X-Sesjon-Token');
+  if (rullertToken) lagreToken(rullertToken);
+
   return res;
 }
 
@@ -41,11 +76,18 @@ async function registrer(invitasjonskode, kortnavn, pin) {
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || `Uventet feil (${res.status}).`);
+  lagreToken(data.sesjonToken);
   return data;
 }
 
 async function loggUt() {
-  await kall('/auth/logg-ut', { method: 'POST' });
+  try {
+    await kall('/auth/logg-ut', { method: 'POST' });
+  } finally {
+    // Lokal utlogging skal alltid lykkes, selv om selve kallet feiler
+    // (f.eks. nettverksfeil) — ellers sitter brukeren fast innlogget lokalt.
+    lagreToken(null);
+  }
 }
 
 async function hentFunn() {
@@ -176,14 +218,17 @@ async function sokArter(term) {
   return res.json();
 }
 
-// Bildet vises via <img src="...">, ikke fetch+blob — sesjonscookien er
-// SameSite=None (ikke Lax, se arkitektur.md ADR 2), men credentials
-// sendes automatisk med et <img>-tag så lenge fetch()-relaterte
-// begrensninger ikke gjelder for bilde-tagger på samme måte — verifiser
-// dette eksplisitt i faktisk nettleser (inkl. iOS Safari/PWA-standalone)
-// før seminaret, se README "Manuell verifisering før seminaret".
+// OPPDATERT 2026-08-28: en <img src="...">-tag kan ikke sette en
+// Authorization-header, så bearer-tokenet (se toppkommentaren) sendes her
+// som ?t=-query-param i stedet — worker/api/src/lib/session.js sin
+// hentToken() godtar eksplisitt dette for akkurat denne ruten. Bevisst
+// avveining: tokenet kan da havne i URL-baserte logger, akseptert for et
+// kortvarig, invitasjonsbeskyttet seminarverktøy (se CHANGELOG.md). Det
+// gamle cookie-only-opplegget denne kommentaren tidligere beskrev fungerte
+// ikke i praksis — se session.js "OPPDATERT 2026-08-28" for hele historien.
 function bildeUrl(id) {
-  return `${API_BASE}/funn/bilde/${id}`;
+  const token = hentLagretToken();
+  return `${API_BASE}/funn/bilde/${id}${token ? `?t=${encodeURIComponent(token)}` : ''}`;
 }
 
 window.ApiClient = {

@@ -9,6 +9,25 @@ import { randomToken, sha256Hex } from './crypto.js';
 // er annerledes her er utelukkende cookie-attributtene (SameSite=None i
 // stedet for Lax) og at requireSession()/opprettSesjon() ikke er koblet til
 // noen magic-link-flyt — se routes/auth.js for den nye inngangen (ADR 11).
+//
+// OPPDATERT 2026-08-28 — REELL PRODUKSJONSFEIL, ikke bare den fryktede
+// risikoen: SameSite=None-cookien viste seg IKKE å fungere i praksis.
+// Safari (mobil-Safari OG standalone-PWA, begge WebKit) blokkerer
+// cross-site-cookier helt siden Safari 13.1/iOS 13.4 ("Full Third-Party
+// Cookie Blocking") — uavhengig av SameSite-verdi. Produkteier fikk 401 på
+// /funn og /ki/gjenkjenn på mobil, mens innlogging så ut til å lykkes
+// (js/app.js sitt brukerCache settes fra svar-BODY-en, ikke fra cookien).
+// Cookien er derfor IKKE lenger primær mekanisme: `Authorization: Bearer
+// <token>`-header er nå primær vei inn (se hentToken() under), sendt av
+// klienten (js/api-client.js, token i localStorage). Cookien beholdes som
+// et uskadelig sekundærforsøk for nettlesere der den faktisk fungerer
+// (typisk ikke-WebKit-nettlesere på samme maskin som ble testet fra), og
+// som fallback for en klient som av en eller annen grunn ikke fikk lagret
+// tokenet. Bilde-tagger (<img src>, se api-client.js sin bildeUrl()) kan
+// ikke sette en Authorization-header, så hentToken() godtar i tillegg
+// tokenet som ?t=-query-param for akkurat den ruten — bevisst avveining
+// (tokenet kan da havne i URL-logger) for et kortvarig, invitasjons-
+// beskyttet seminarverktøy, se CHANGELOG.md.
 
 const COOKIE_NAVN = 'ramme_sesjon';
 const LEVETID_MS = 30 * 24 * 60 * 60 * 1000; // 30 dager — dekker godt et par dagers seminar
@@ -49,7 +68,7 @@ export function slettSesjonCookieHeader() {
 // status sjekkes på hver forespørsel, ikke bare ved innlogging (derfor
 // sesjonsbasert i D1, ikke JWT).
 export async function requireSession(request, env) {
-  const token = parseCookie(request.headers.get('Cookie') || '', COOKIE_NAVN);
+  const token = hentToken(request);
   if (!token) return null;
 
   const hash = await sha256Hex(token);
@@ -88,7 +107,7 @@ export async function requireAdmin(request, env) {
 // sesjonen ikke er moden for rullering ennå (rullert < 24t siden); ellers
 // { token, utloper } — index.js bygger en ny Set-Cookie av dette.
 export async function rullerSesjonHvisNodvendig(request, env) {
-  const gammelToken = parseCookie(request.headers.get('Cookie') || '', COOKIE_NAVN);
+  const gammelToken = hentToken(request);
   if (!gammelToken) return null;
 
   const gammelHash = await sha256Hex(gammelToken);
@@ -114,10 +133,26 @@ export async function rullerSesjonHvisNodvendig(request, env) {
 }
 
 export async function slettSesjon(request, env) {
-  const token = parseCookie(request.headers.get('Cookie') || '', COOKIE_NAVN);
+  const token = hentToken(request);
   if (!token) return;
   const hash = await sha256Hex(token);
   await env.DB.prepare('DELETE FROM sesjoner WHERE hash = ?').bind(hash).run();
+}
+
+// Delt token-uthenting for alle tre funksjonene over — se OPPDATERT-notatet
+// på toppen av filen. Rekkefølge med hensikt: Authorization-header (primær,
+// virker overalt inkl. Safari) → ?t=-query-param (kun brukt av <img src>,
+// se bildeUrl() i api-client.js — en header er ikke mulig der) → Cookie
+// (sekundært, uskadelig forsøk for nettlesere som faktisk lagret den).
+function hentToken(request) {
+  const auth = request.headers.get('Authorization') || '';
+  if (auth.startsWith('Bearer ')) return auth.slice('Bearer '.length).trim();
+
+  const url = new URL(request.url);
+  const fraQuery = url.searchParams.get('t');
+  if (fraQuery) return fraQuery;
+
+  return parseCookie(request.headers.get('Cookie') || '', COOKIE_NAVN);
 }
 
 function parseCookie(header, navn) {

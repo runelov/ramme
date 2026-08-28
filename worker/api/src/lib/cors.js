@@ -12,16 +12,23 @@
 // Sesjonscookien settes derfor med SameSite=None (se session.js) i stedet
 // for Lax, og som motvekt krever alle muterende ruter at Origin-headeren
 // nøyaktig matcher ALLOWED_ORIGIN (se sjekkOpprinnelse under) — samme
-// forsvar en streng SameSite=Lax-policy ellers ville gitt gratis. Dette er
+// forsvar en streng SameSite=Lax-policy ellers ville gitt gratis. Dette var
 // en kjent, bevisst akseptert risiko (mistenkt rotårsak til en iOS-PWA-bug
-// i FungiFinder der data stille sluttet å laste) — test eksplisitt i iOS
-// Safari/PWA-standalone-modus før seminaret.
+// i FungiFinder der data stille sluttet å laste) — DEN INNTRAFF FAKTISK
+// (se session.js "OPPDATERT 2026-08-28"): Safari blokkerer cross-site-
+// cookien helt, uansett SameSite. `Authorization: Bearer`-header er nå
+// primær autentiseringsvei (cookien er kun et uskadelig sekundærforsøk),
+// derfor 'Authorization' i Allow-Headers og X-Sesjon-Token eksponert under
+// — Origin-sjekken beholdes uendret (skader ikke, og er fortsatt reell
+// defense-in-depth for de muterende rutene som fortsatt også godtar
+// cookien).
 export function corsHeaders(env) {
   return {
     'Access-Control-Allow-Origin': env.ALLOWED_ORIGIN,
     'Access-Control-Allow-Credentials': 'true',
     'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Expose-Headers': 'X-Sesjon-Token',
   };
 }
 
