@@ -5,6 +5,38 @@ Versjonsnummereringen starter på nytt fra `0.1.0` her — Ramme er en egen,
 uavhengig repo-historie fra forgreningstidspunktet, følger ikke videre på
 Bondøyas løpende versjonsnummer (se CLAUDE.md).
 
+## 0.1.2 — KI-artsgjenkjenning ga aldri treff: Worker-til-Worker-fetch mot workers.dev er upålitelig
+
+Rapportert av produkteier: KI-artsgjenkjenning returnerte konsekvent ingen
+kandidater etter flere testrunder, til tross for at både `ANTHROPIC_API_KEY`
+og `ARTSORAKEL_TOKEN` var satt riktig.
+
+**Rotårsak** (funnet via midlertidig diagnostikk-logging i
+`worker/api/src/routes/ki.js`, deployet og fjernet igjen samme dag):
+`routes/ki.js` sitt vanlige `fetch(env.KI_PROXY_URL, ...)`-kall mot
+`worker/ki-proxy` sin `*.workers.dev`-URL ga konsekvent **404** (Cloudflares
+egen "ingen Worker her"-side, ikke et svar fra ki-proxyens egen kode).
+Bekreftet med `curl` direkte mot nøyaktig samme URL fra en vanlig ekstern
+klient — den svarte helt riktig der. Dette er en kjent Cloudflare-
+begrensning: **Worker-til-Worker-`fetch()` mot en annen Workers
+`*.workers.dev`-URL innad i samme konto er upålitelig**, selv om samme URL
+fungerer perfekt for eksterne klienter.
+
+**Fiks**: byttet til en [Service
+Binding](https://developers.cloudflare.com/workers/runtime-apis/bindings/service-bindings/)
+(`env.KI_PROXY` i `wrangler.toml`, `env.KI_PROXY.fetch(...)` i `ki.js`) —
+Cloudflares native mekanisme for Worker-til-Worker-kall, ruter direkte internt
+i nettverket uten DNS/internett involvert. `KI_PROXY_URL`-variabelen er
+fjernet. `worker/ki-proxy` selv er uendret — fortsatt en egen, uavhengig
+deploy (ADR 3), kun *kalt* annerledes fra worker/api sin side.
+
+**Generisk lærdom** (lagt til `~/claude/docs/erfaringsbank.md`): ethvert
+fremtidig `~/claude`-produkt der én Worker skal kalle en annen Worker uten
+et kjøpt domene på begge sider, bør bruke Service Bindings fra start —
+ikke et rått `fetch()` mot `*.workers.dev`, som kan se ut til å fungere i
+enkle tester (feilen dukket ikke opp før faktisk bruk gjennom hele
+brukerflyten) men feiler i produksjon.
+
 ## 0.1.1 — To feil funnet ved faktisk mobiltesting
 
 Rapportert av produkteier rett etter første live-deploy:

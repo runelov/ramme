@@ -29,6 +29,22 @@ id = "d2709a196c2140ccb54b90daeeefaa7e"
 binding = "IMAGES"
 bucket_name = "ramme-bilder"
 
+# Lagt til 2026-08-28 — REELL PRODUKSJONSFEIL FUNNET VED FAKTISK TESTING:
+# et vanlig fetch(env.KI_PROXY_URL) mot ki-proxyens *.workers.dev-URL ga
+# konsekvent 404 (Cloudflares egen "ingen Worker her"-side, IKKE et svar fra
+# ki-proxyens kode) når kallet kom FRA en annen Worker i samme konto — til
+# tross for at nøyaktig samme URL svarer helt riktig for en vanlig ekstern
+# klient (verifisert med curl direkte). Dette er en kjent Cloudflare-
+# begrensning: Worker-til-Worker-fetch mot en annen *.workers.dev-URL innad
+# i samme konto er upålitelig. Service Bindings er den native, anbefalte
+# løsningen — ruter direkte internt i Cloudflares nettverk, ingen DNS/
+# internett involvert, ingen ekstra kostnad, krever ikke et kjøpt domene
+# (ADR 2 uendret). worker/ki-proxy trenger INGEN endring for dette — samme
+# uavhengige deploy som før, bare kalt annerledes fra worker/api sin side.
+[[services]]
+binding = "KI_PROXY"
+service = "ramme-ki-proxy"
+
 [vars]
 # Frontendens faktiske opphav (GitHub Pages default-domene) — brukt i CORS
 # (Access-Control-Allow-Origin) og i sjekkOpprinnelse()-CSRF-sjekken på
@@ -37,10 +53,9 @@ bucket_name = "ramme-bilder"
 ALLOWED_ORIGIN = "https://runelov.github.io"
 ENVIRONMENT = "production"
 
-# Rammes egen, uavhengige KI-proxy-Worker sin URL (ADR 3 — IKKE
-# ki.bondoya.no). PLACEHOLDER — bytt til den faktiske *.workers.dev-URL-en
-# etter at worker/ki-proxy er deployet.
-KI_PROXY_URL = "https://ramme-ki-proxy.bondoya.workers.dev"
+# KI_PROXY_URL er FJERNET 2026-08-28 — erstattet av Service Binding-en
+# over (env.KI_PROXY), se den kommentaren for hvorfor. routes/ki.js bruker
+# nå env.KI_PROXY.fetch(...) i stedet for fetch(env.KI_PROXY_URL, ...).
 
 # INVITASJONSKODE, KI_PROXY_SHARED_SECRET settes IKKE her — sett dem med:
 #   wrangler secret put INVITASJONSKODE

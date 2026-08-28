@@ -3,11 +3,18 @@ import { corsHeaders, sjekkOpprinnelse } from '../lib/cors.js';
 import { requireSession } from '../lib/session.js';
 import { sjekkOgTellIp } from '../lib/ratelimit.js';
 
-// Forket fra Bondøyas routes/ki.js. KI_PROXY_URL peker mot Rammes EGEN,
-// uavhengig utrullede worker/ki-proxy (se arkitektur.md ADR 3) — ALDRI mot
-// ki.bondoya.no. Satt via Worker-variabelen KI_PROXY_URL (wrangler.toml
-// [vars] eller secret), ikke hardkodet, siden den faktiske *.workers.dev-
-// URL-en først finnes etter at ki-proxy-workeren er deployet.
+// Forket fra Bondøyas routes/ki.js. Kaller Rammes EGEN, uavhengig utrullede
+// worker/ki-proxy (se arkitektur.md ADR 3) — ALDRI ki.bondoya.no.
+//
+// OPPDATERT 2026-08-28 — REELL PRODUKSJONSFEIL FUNNET VED FAKTISK TESTING:
+// et vanlig fetch(env.KI_PROXY_URL) mot ki-proxyens *.workers.dev-URL ga
+// konsekvent 404 (Cloudflares egen "ingen Worker her"-side) når kallet kom
+// FRA en annen Worker i samme konto, selv om nøyaktig samme URL svarer
+// riktig for en vanlig ekstern klient (kjent Cloudflare-begrensning:
+// Worker-til-Worker-fetch mot en annen *.workers.dev-URL innad i samme
+// konto er upålitelig). Byttet til en Service Binding (env.KI_PROXY, se
+// wrangler.toml) — ruter direkte internt i Cloudflares nettverk, ingen
+// DNS/internett involvert. KI_PROXY_URL-variabelen er fjernet.
 //
 // sjekkOpprinnelse() lagt til her (Bondøyas tilsvarende rute har den IKKE
 // — Bondøya bruker SameSite=Lax, som gir CSRF-beskyttelse gratis). Ramme
@@ -23,8 +30,8 @@ export async function gjenkjennArt({ request, env }) {
   const bruker = await requireSession(request, env);
   if (!bruker) return json({ error: 'Ikke innlogget.' }, 401, cors);
 
-  if (!env.KI_PROXY_URL) {
-    return json({ error: 'KI-gjenkjenning er ikke satt opp (KI_PROXY_URL mangler).' }, 500, cors);
+  if (!env.KI_PROXY) {
+    return json({ error: 'KI-gjenkjenning er ikke satt opp (KI_PROXY-binding mangler).' }, 500, cors);
   }
 
   const ip = request.headers.get('CF-Connecting-IP') || 'ukjent';
@@ -48,9 +55,13 @@ export async function gjenkjennArt({ request, env }) {
   videreForm.append('bilde', bildeFil, 'funn.jpg');
   videreForm.append('kandidater', kandidater);
 
+  // env.KI_PROXY.fetch() — Service Binding, ikke et vanlig nettverkskall
+  // (se toppkommentaren). URL-en i Request-objektet spiller ingen rolle for
+  // ruting her (bindingen går rett til worker/ki-proxy uansett sti), men en
+  // ekte URL kreves av Request-konstruktøren.
   let kiRes;
   try {
-    kiRes = await fetch(env.KI_PROXY_URL, {
+    kiRes = await env.KI_PROXY.fetch('https://ramme-ki-proxy.internal/', {
       method: 'POST',
       headers: { 'X-App-Secret': env.KI_PROXY_SHARED_SECRET || '' },
       body: videreForm,
