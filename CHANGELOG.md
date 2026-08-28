@@ -5,6 +5,29 @@ Versjonsnummereringen starter på nytt fra `0.1.0` her — Ramme er en egen,
 uavhengig repo-historie fra forgreningstidspunktet, følger ikke videre på
 Bondøyas løpende versjonsnummer (se CLAUDE.md).
 
+## 0.1.6 — Rammevandrer-sonene oppgradert fra gjettede firkanter til ekte OSM-geometri
+
+`data/soner-ramme.json` hadde tre rene, hånd-tegnede placeholder-firkanter
+(Tunet, Havlystparken, Strandsonen). Et Overpass-søk mot OpenStreetMap
+rundt det geokodede hotellpunktet fant faktiske, kartlagte polygoner for
+flere av disse — en `leisure=park`-polygon (trolig selve Havlystparken),
+en `natural=beach`-sandstrand rett ved hotellet, og en liten
+`natural=wood`-løvskogflekk. Byttet inn de tre ekte polygonene, og lagt
+til en helt ny fjerde sone, **Skogholtet**, bygget fra skogpolygonen —
+matcher det opprinnelige femte sonenavnet fra konsept.md sin
+brainstorming, som aldri fikk geometri før nå.
+
+Fortsatt IKKE en bekreftet eiendomsgrense — dette er offentlig
+OSM-terrengdata, ikke en oppmålt privat grense. Strandsonen-polygonen er
+spesielt smal og kan vise seg for liten til å treffes pålitelig av
+unøyaktig GPS. Tunet mangler fortsatt en tydelig OSM-kilde og er uendret
+(hånd-tegnet boks). Se `data/soner-ramme.json` sine `notat`-felt for full
+kildehenvisning per sone.
+
+Ingen kodeendring nødvendig — `lib/oyer.js` sin `erPunktIPolygon()`/
+`finnOy()` og `js/map.js` sin `renderSonerPaKart()` er begge allerede
+generiske over antall/innhold i sonelisten.
+
 ## 0.1.5 — v0.1.3-fiksen for "Hele gjengen" dekket kun ett av to duplikat-steder
 
 Rapportert av produkteier rett etter å ha satt `forventetDeltakere = 10`

@@ -3,7 +3,7 @@
     "id": "tunet",
     "navn": "Tunet / gårdsplassen",
     "placeholder": true,
-    "notat": "PLACEHOLDER — grov firkant rundt et antatt sentrum av tunet, IKKE en oppmålt eiendomsgrense. Faktiske sonegrenser krever befaring/produkteier, se veien-videre.md 'Endelig sonedefinisjon for Rammevandrer-badgen'. Ikke fremstill dette som endelig.",
+    "notat": "Fortsatt en grov, hånd-tegnet firkant (IKKE en oppmålt eiendomsgrense) — i motsetning til de tre andre sonene under er ingen tydelig avgrenset OSM-polygon funnet for selve tunet/gårdsplassen ved et Overpass-søk 2026-08-28 (kun et enkelt punkt, en gammel telefonkiosk ved node 670824768, lat 59.598538/lon 10.655408 — samme sted som Rammes geokodede hotellpunkt). Boksen er sentrert rundt akkurat det punktet. Faktisk avgrensning krever fortsatt befaring/produkteier, se veien-videre.md 'Endelig sonedefinisjon for Rammevandrer-badgen'.",
     "polygon": [
       [59.5990, 10.6545],
       [59.5990, 10.6561],
@@ -16,26 +16,56 @@
     "id": "havlystparken",
     "navn": "Havlystparken",
     "placeholder": true,
-    "notat": "PLACEHOLDER — grov firkant vest for tunet, IKKE en oppmålt parkgrense. Se veien-videre.md.",
+    "notat": "OPPGRADERT 2026-08-28 fra en hånd-tegnet firkant til en EKTE, kartlagt OSM-polygon (way 1521953111, leisure=park, hentet via Overpass), liggende rett nord for hotellpunktet — trolig selve Havlystparken, men IKKE bekreftet mot produkteiers egen kjennskap til eiendommen eller en offisiell eiendomsgrense. Fortsatt markert som placeholder av den grunnen, men et reelt steg opp fra en gjettet firkant.",
+    "kilde": "OpenStreetMap way 1521953111 (leisure=park), Overpass 2026-08-28",
     "polygon": [
-      [59.6000, 10.6480],
-      [59.6000, 10.6545],
-      [59.5975, 10.6545],
-      [59.5975, 10.6480],
-      [59.6000, 10.6480]
+      [59.598997, 10.655108],
+      [59.5991, 10.655375],
+      [59.599241, 10.655833],
+      [59.599274, 10.656302],
+      [59.599299, 10.656483],
+      [59.599205, 10.656669],
+      [59.599148, 10.656543],
+      [59.599163, 10.65641],
+      [59.599085, 10.656079],
+      [59.598916, 10.655909],
+      [59.59882, 10.655645],
+      [59.598781, 10.655354],
+      [59.598997, 10.655108]
     ]
   },
   {
     "id": "strandsonen",
     "navn": "Strandsonen",
     "placeholder": true,
-    "notat": "PLACEHOLDER — grov firkant sør/øst for tunet mot fjorden, IKKE en oppmålt strandlinje. Se veien-videre.md.",
+    "notat": "OPPGRADERT 2026-08-28 fra en hånd-tegnet firkant til en EKTE OSM-sandstrand-polygon (way 670824769, natural=beach, surface=sand) rett vest/sørvest for hotellpunktet. NB: dette er kun ETT strandsegment nær hotellet, ikke hele Rammes strandlinje — OSM har flere separate beach-/bare_rock-polygoner litt lenger unna (nord og sør) som ikke er tatt med her. Polygonen er også ganske smal, så en unøyaktig GPS-posisjon kan i praksis falle utenfor selv om brukeren fysisk står på stranden — vurder å utvide/justere etter faktisk bruk under seminaret, ikke bare anta den er stor nok.",
+    "kilde": "OpenStreetMap way 670824769 (natural=beach), Overpass 2026-08-28",
     "polygon": [
-      [59.5980, 10.6545],
-      [59.5980, 10.6610],
-      [59.5955, 10.6610],
-      [59.5955, 10.6545],
-      [59.5980, 10.6545]
+      [59.598889, 10.654703],
+      [59.598924, 10.654613],
+      [59.599047, 10.6543],
+      [59.598981, 10.654014],
+      [59.598869, 10.654332],
+      [59.598627, 10.654744],
+      [59.598451, 10.655045],
+      [59.598608, 10.654973],
+      [59.598677, 10.654922],
+      [59.598743, 10.654874],
+      [59.598889, 10.654703]
+    ]
+  },
+  {
+    "id": "skogholtet",
+    "navn": "Skogholtet",
+    "placeholder": true,
+    "notat": "NY SONE lagt til 2026-08-28 — fantes ikke i noen tidligere versjon av denne filen. konsept.md sitt opprinnelige forslag til soneliste nevnte 'skogholtet' som en mulig femte sone (sammen med Havlystparken/tunet/strandsonen/arboretet), men ingen geometri fantes for den før nå. Bygget fra en ekte, kartlagt OSM-løvskog-polygon (way 795946502, natural=wood, leaf_type=broadleaved) rett vest for Havlystparken-polygonen over. Svært liten (grovt ca. 15×20 meter) — vurder om den er stor nok til å være meningsfull som egen sone, eller om den bør slås sammen med Havlystparken ved en fremtidig befaring.",
+    "kilde": "OpenStreetMap way 795946502 (natural=wood), Overpass 2026-08-28",
+    "polygon": [
+      [59.599063, 10.65473],
+      [59.599083, 10.654566],
+      [59.599047, 10.6543],
+      [59.598924, 10.654613],
+      [59.599063, 10.65473]
     ]
   }
 ]
