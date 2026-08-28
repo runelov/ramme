@@ -16,14 +16,20 @@ import { hentForventetDeltakere } from './innstillinger.js';
 //   bygget for Ramme v1 — Ramme har ikke det tilsvarende datagrunnlaget i
 //   drift ennå (se arkitektur.md ADR 8/veien-videre.md, anbefalt men ikke
 //   bindende utvidelse). Ingen sjeldenhet-score-element her.
-// - Oppdageren, Rødlistejeger, Artssamler (x3), Mangfoldsmester, Årstidene
-//   rundt er UENDRET fra Bondøya — ingen sted-spesifikk avhengighet i disse.
-//   NB: Mangfoldsmester sitt mål er fortsatt ARTSTYPER.length (17), selv om
-//   artsliste.md sin research kun fant reelle kandidater for 7 av de 17
-//   artstypene i Rammes nærområde — konsept.md/veien-videre.md flagger
-//   eksplisitt at dette gjør badgen vanskelig/kanskje uoppnåelig og at en
-//   nedskalering er en åpen, IKKE tatt beslutning (produkteier avgjør,
-//   ikke denne implementasjonen).
+// - Oppdageren, Rødlistejeger er UENDRET fra Bondøya — ingen
+//   sted-spesifikk avhengighet i disse.
+// - **Skalert ned av produkteier 2026-08-29** (se CHANGELOG.md), nettopp
+//   den nedskaleringen forrige kommentar her flagget som åpen: Bondøyas
+//   terskler (Artssamler 10/25/50 arter, Mangfoldsmester alle 17
+//   artstyper) var kalibrert for en flerårig hobby-app, ikke et 1-2
+//   dagers seminar der artsliste.md sin research kun fant reelle
+//   kandidater for 7 av de 17 artstypene. Artssamler er nå 5/10/15,
+//   Mangfoldsmester er nå "minst 5 artstyper" (ikke lenger alle 17).
+// - **"Årstidene rundt" er fjernet helt** (produkteier, 2026-08-29) — et
+//   flerårig hobbyprosjekt-merke (registrert i alle fire årstider) uten
+//   mening for et 1-2 dagers seminar. `sesong()`-hjelpefunksjonen og
+//   `distinkteSesonger`-beregningen er fjernet sammen med badgen, ikke
+//   latt stå som død kode.
 
 const POENG = {
   REGISTRERING: 1,
@@ -34,16 +40,14 @@ const POENG = {
   RAMMEVANDRER_PER_EKSTRA_SONE: 15,
 };
 
-const ARTSSAMLER_TERSKLER = [10, 25, 50];
+// Skalert ned fra Bondøyas [10, 25, 50] (produkteier, 2026-08-29) — se
+// toppkommentaren for hvorfor.
+const ARTSSAMLER_TERSKLER = [5, 10, 15];
 const ARTSSAMLER_NAVN = ['Artssamler', 'Ivrig artssamler', 'Artsmester'];
 
-function sesong(tidspunktIso) {
-  const m = new Date(tidspunktIso).getUTCMonth(); // 0-11
-  if (m === 11 || m === 0 || m === 1) return 'vinter';
-  if (m >= 2 && m <= 4) return 'var';
-  if (m >= 5 && m <= 7) return 'sommer';
-  return 'host';
-}
+// Skalert ned fra Bondøyas ARTSTYPER.length (alle 17) til et fast tall
+// (produkteier, 2026-08-29) — se toppkommentaren for hvorfor.
+const MANGFOLDSMESTER_MAL = 5;
 
 // Norsk tekst for besøkte soner — samme flertallsbøying-idé som Bondøyas
 // beskrivOyer(), men soner har alltid navn her (ingen "navnløse skjær"-
@@ -120,8 +124,6 @@ export async function beregnFremdrift(brukerId, env) {
   const besokteSoner = [...besokteSonerMap.values()];
   const rammevandrer = beregnRammevandrerNiva(new Set(besokteSoner.map((s) => s.id)), alleSoner());
 
-  const distinkteSesonger = new Set(funn.map((f) => sesong(f.tidspunkt)));
-
   // "Hele gjengen" — kollektivt lagmerke, ny logikk uten Bondøya-ekvivalent
   // (se konsept.md badge-tabell). Samme globale telling som
   // routes/leaderboard.js sin "X/Y har registrert"-indikator — hentet her
@@ -187,9 +189,9 @@ export async function beregnFremdrift(brukerId, env) {
     {
       nokkel: 'mangfoldsmester',
       navn: 'Mangfoldsmester',
-      beskrivelse: `Minst én art i hver av de ${ARTSTYPER.length} artstypene.`,
-      opptjent: distinkteArtstyper.size === ARTSTYPER.length,
-      progresjon: { naa: distinkteArtstyper.size, mal: ARTSTYPER.length },
+      beskrivelse: `Minst ${MANGFOLDSMESTER_MAL} ulike artstyper (av ${ARTSTYPER.length} totalt).`,
+      opptjent: distinkteArtstyper.size >= MANGFOLDSMESTER_MAL,
+      progresjon: { naa: distinkteArtstyper.size, mal: MANGFOLDSMESTER_MAL },
     },
     ...rammevandrer.badges.map((b) => ({
       ...b,
@@ -199,18 +201,18 @@ export async function beregnFremdrift(brukerId, env) {
           : `Funn registrert i minst ${b.progresjon.mal} soner på Ramme-eiendommen.`,
     })),
     {
-      nokkel: 'arstidene_rundt',
-      navn: 'Årstidene rundt',
-      beskrivelse: 'Registrert i alle fire årstider.',
-      opptjent: distinkteSesonger.size === 4,
-      progresjon: { naa: distinkteSesonger.size, mal: 4 },
-    },
-    {
+      // RETTET 2026-08-29 (samme feilklasse som ADR 12/14 — se
+      // arkitektur.md): beskrivelse/progresjon brukte fortsatt antallAktivt
+      // (faktisk registrerte kontoer) her, selv om selve heleGjengenOppnadd-
+      // booleanen lenger opp allerede var rettet til forventetDeltakere i
+      // v0.1.5. Symptomet var usynlig fordi opptjent-verdien var riktig —
+      // kun TALLENE vist til brukeren var fortsatt feil. Funnet ved samme
+      // grep-gjennomgang som badge-nedskaleringen denne commiten gjør.
       nokkel: 'hele_gjengen',
       navn: 'Hele gjengen',
-      beskrivelse: `Alle ${antallAktivt} aktive deltakere har registrert minst ett funn.`,
+      beskrivelse: `Alle ${forventetDeltakere} deltakere har registrert minst ett funn.`,
       opptjent: heleGjengenOppnadd,
-      progresjon: { naa: antallMedFunn, mal: antallAktivt },
+      progresjon: { naa: antallMedFunn, mal: forventetDeltakere },
     },
   ];
 

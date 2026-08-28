@@ -5,6 +5,30 @@ Versjonsnummereringen starter på nytt fra `0.1.0` her — Ramme er en egen,
 uavhengig repo-historie fra forgreningstidspunktet, følger ikke videre på
 Bondøyas løpende versjonsnummer (se CLAUDE.md).
 
+## 0.1.9 — Badge-terskler skalert ned for et engangsseminar, "Årstidene rundt" fjernet
+
+Produkteier: Bondøyas badge-terskler (kalibrert for en flerårig hobby-app)
+er urealistiske for et 1-2 dagers seminar.
+
+- **Artssamler / Ivrig artssamler / Artsmester**: terskler endret fra
+  Bondøyas 10/25/50 arter til **5/10/15**.
+- **Mangfoldsmester**: endret fra "alle 17 artstyper" til **"minst 5
+  artstyper"** — artsliste.md fant uansett reelle kandidater for kun 7 av
+  17 i nærområdet, så "alle 17" var urealistisk selv før nedskaleringen.
+- **"Årstidene rundt" er fjernet helt** — et flerårig hobbyprosjekt-merke
+  (alle fire årstider) uten mening for et enkeltstående seminar.
+  `sesong()`-hjelpefunksjonen og `distinkteSesonger`-beregningen i
+  `lib/fremdrift.js` er fjernet sammen med badgen, ikke latt stå som død
+  kode. Ikonet fjernet fra `MERKE_IKONER` i `js/app.js`.
+
+**Fanget i samme gjennomgang** (samme feilklasse som ADR 12/14, se
+arkitektur.md): "Hele gjengen"-badgens `beskrivelse`/`progresjon`-felt i
+`lib/fremdrift.js` viste fortsatt `antallAktivt` (faktisk registrerte
+kontoer) i teksten til brukeren, selv om selve `opptjent`-booleanen
+allerede var rettet til `forventetDeltakere` i v0.1.5 — symptomet var
+usynlig fordi kun VISNINGSTALLENE var feil, ikke selve oppnådd/ikke-
+oppnådd-vurderingen. Rettet til `forventetDeltakere` konsekvent.
+
 ## 0.1.8 — Rammevandrer-sonene er nå tegnet og bekreftet av produkteier selv
 
 Fortsettelse av v0.1.7: produkteier tegnet/korrigerte de foreslåtte

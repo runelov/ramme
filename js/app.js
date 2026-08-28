@@ -10,7 +10,7 @@
 (function(){
 "use strict";
 
-const APP_VERSION = '0.1.8';
+const APP_VERSION = '0.1.9';
 const APP_BUILD_DATE = '2026-08-28';
 
 // Speilbilde av ARTSTYPER i worker/api/src/lib/taxonomi.js — appen har
@@ -300,7 +300,6 @@ const MERKE_IKONER = {
   mangfoldsmester: '🧩',
   rammevandrer_1: '🚶',
   rammevandrer_2: '🗺️',
-  arstidene_rundt: '🔄',
   hele_gjengen: '🤝',
 };
 
