@@ -10,7 +10,7 @@
 (function(){
 "use strict";
 
-const APP_VERSION = '0.1.11';
+const APP_VERSION = '0.1.12';
 const APP_BUILD_DATE = '2026-08-28';
 
 // Speilbilde av ARTSTYPER i worker/api/src/lib/taxonomi.js — appen har
@@ -38,6 +38,13 @@ let pendingPosition = null; // {lat, lon}
 let pendingPositionKilde = null; // 'gps' | 'exif' | 'manuell'
 let pendingTimestamp = null;
 let pendingKiResultat = null;
+// Skiller "KI kjørte OK men fant ingen god kandidat" (pendingKiResultat er
+// {beste:null, alternativer:[]} eller null uten feil) fra "KI-kallet
+// feilet teknisk" (nettverk/auth/tidsavbrudd) — de to så tidligere
+// IDENTISKE ut i UI-et ("Fant ikke arten automatisk"), som er nøyaktig
+// hvorfor en reell feil (f.eks. 401) fremsto som "ingen feilmelding" for
+// produkteier. Se renderRegisterPanel().
+let pendingKiFeil = null; // feilmeldingstekst, eller null
 let pendingArt = null; // { norsk, latinsk, artstype, taxonId }
 let pendingEntry = null; // hele det siste forsøkte innsendings-objektet, brukt av "Prøv igjen" ved feil, se saveFind()
 let fremdriftCache = null;
@@ -690,6 +697,7 @@ function startRegistration(fraGalleri){
   pendingPositionKilde = null;
   pendingTimestamp = null;
   pendingKiResultat = null;
+  pendingKiFeil = null;
   pendingArt = null;
   pendingEntry = null;
   if (!fraGalleri && navigator.geolocation) {
@@ -741,30 +749,66 @@ async function onImageCaptured(e){
     if (dato instanceof Date && !isNaN(dato)) pendingTimestamp = dato;
   }
 
-  pendingImageBlob = await compressImage(file);
+  // OPPDATERT 2026-08-28: try/catch lagt til her — compressImage() kunne
+  // tidligere avvises (se dens egen kommentar om img.onerror/tidsavbrudd)
+  // uten at noe fanget det opp, så hele flyten hang stille FØR
+  // registreringspanelet i det hele tatt ble åpnet. Åpner nå panelet
+  // uansett og viser feilen via samme pendingKiFeil-mekanisme som
+  // kjorKiGjenkjenning() bruker.
   toggleSheet('registerPanel', true);
+  try {
+    pendingImageBlob = await compressImage(file);
+  } catch (err) {
+    console.warn('Kunne ikke lese bildet', err);
+    pendingImageBlob = null;
+    pendingKiFeil = (err && err.message) || 'Kunne ikke lese bildet.';
+    renderRegisterPanel({ scanning: false });
+    return;
+  }
   await kjorKiGjenkjenning();
 }
 
 async function kjorKiGjenkjenning(){
   renderRegisterPanel({ scanning: true });
+  pendingKiFeil = null;
   try {
     const hint = buildSpeciesHintList();
     pendingKiResultat = await window.KiClient.gjenkjenn(pendingImageBlob, hint);
     console.debug('KI-svar', pendingKiResultat);
   } catch (err) {
+    // VIKTIG: pendingKiFeil er det som gjør en teknisk feil (nettverk/
+    // auth/tidsavbrudd) synlig i UI-et, se renderRegisterPanel() — uten
+    // den så et feilet KI-kall IDENTISK ut som "KI kjørte OK, men fant
+    // ingen god kandidat" (begge ga pendingKiResultat === null), som var
+    // nøyaktig hvorfor en reell 401 fremsto som "ingen feilmelding".
     console.warn('KI-gjenkjenning feilet', err);
     pendingKiResultat = null;
+    pendingKiFeil = (err && err.message) || 'Ukjent feil';
   }
   renderRegisterPanel({ scanning: false });
 }
 
 // Skalerer ned og komprimerer bildet client-side før opplasting (maks
 // 1600px lengste side, JPEG q~0.8).
+//
+// OPPDATERT 2026-08-28: img.onerror manglet helt, og uten den hang hele
+// registreringsflyten stille (ingen feilmelding, ingen artsforslag —
+// nøyaktig symptomet produkteier rapporterte) hvis bildet ikke klarte å
+// dekodes i en <img> (observert på HEIC-bilder valgt fra kamerarullen på
+// iOS i enkelte Safari-versjoner — kamera-opptak konverteres normalt til
+// JPEG av OS-et før input-eventet, men et bilde valgt fra selve
+// Bilder-appen kan fortsatt være ekte HEIC). Lagt til en eksplisitt
+// tidsavbrudd i tillegg, i tilfelle et fremtidig tilfelle henger uten at
+// verken onload eller onerror trigges.
 function compressImage(file){
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
+    const ferdig = (fn, arg) => { clearTimeout(tidsavbrudd); URL.revokeObjectURL(url); fn(arg); };
+    const tidsavbrudd = setTimeout(
+      () => ferdig(reject, new Error('Tidsavbrudd ved lasting av bildet.')),
+      10000
+    );
     img.onload = () => {
       const maxSide = 1600;
       let { width, height } = img;
@@ -776,8 +820,9 @@ function compressImage(file){
       const canvas = document.createElement('canvas');
       canvas.width = width; canvas.height = height;
       canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-      canvas.toBlob(blob => { URL.revokeObjectURL(url); resolve(blob); }, 'image/jpeg', 0.8);
+      canvas.toBlob(blob => ferdig(resolve, blob), 'image/jpeg', 0.8);
     };
+    img.onerror = () => ferdig(reject, new Error('Kunne ikke lese bildet — prøv et annet bilde eller format.'));
     img.src = url;
   });
 }
@@ -820,6 +865,20 @@ function renderRegisterPanel(state){
     return;
   }
 
+  // Bildet klarte ikke å lastes i det hele tatt (se compressImage() sin
+  // kommentar) — ingen previewUrl å vise, og ingenting å kjøre KI eller
+  // manuell art-søk mot. Egen, tidlig gren fremfor å la resten av
+  // funksjonen anta at previewUrl/pendingImageBlob finnes.
+  if (pendingKiFeil && !pendingImageBlob) {
+    c.innerHTML = `
+      <p class="hint">${escapeHtml(pendingKiFeil)}</p>
+      <div class="sheetActions">
+        <button id="cancelFindBtn" class="secondaryBtn">Avbryt</button>
+      </div>`;
+    el('cancelFindBtn').addEventListener('click', () => toggleSheet('registerPanel', false));
+    return;
+  }
+
   const beste = pendingKiResultat && pendingKiResultat.beste;
   const autoVelg = pendingKiResultat && pendingKiResultat.autoVelg;
   const alternativer = (pendingKiResultat && pendingKiResultat.alternativer) || [];
@@ -845,6 +904,16 @@ function renderRegisterPanel(state){
           </button>`).join('')}
       </div>
       ${FOTOTIPS_HTML}`;
+  } else if (pendingKiFeil) {
+    // Skilt fra "fant ikke arten automatisk" under — dette er en TEKNISK
+    // feil (nettverk/auth/tidsavbrudd), ikke et legitimt "ingen god
+    // kandidat"-svar fra KI-tjenesten. Se pendingKiFeil sin kommentar.
+    kiHtml = `
+      <p class="hint">⚠️ KI-gjenkjenning feilet: ${escapeHtml(pendingKiFeil)}</p>
+      <div class="sheetActions">
+        <button id="provKiIgjenBtn" class="secondaryBtn">Prøv KI på nytt</button>
+      </div>
+      <p class="hint">Du kan uansett velge art manuelt under.</p>${FOTOTIPS_HTML}`;
   } else {
     kiHtml = `<p class="hint">Fant ikke arten automatisk. Velg art manuelt under.</p>${FOTOTIPS_HTML}`;
   }
@@ -873,6 +942,8 @@ function renderRegisterPanel(state){
 
   const pickBtn = el('pickPosBtn') || el('changePosBtn');
   if (pickBtn) pickBtn.addEventListener('click', pickPositionOnMap);
+  const provKiIgjenBtn = el('provKiIgjenBtn');
+  if (provKiIgjenBtn) provKiIgjenBtn.addEventListener('click', kjorKiGjenkjenning);
   el('findDato').addEventListener('change', (ev) => {
     const d = new Date(ev.target.value);
     if (!isNaN(d)) pendingTimestamp = d;

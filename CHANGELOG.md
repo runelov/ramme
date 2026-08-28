@@ -5,6 +5,48 @@ Versjonsnummereringen starter på nytt fra `0.1.0` her — Ramme er en egen,
 uavhengig repo-historie fra forgreningstidspunktet, følger ikke videre på
 Bondøyas løpende versjonsnummer (se CLAUDE.md).
 
+## 0.1.12 — KI-gjenkjenningsfeil var usynlig i UI-et (så ut som "ingen feilmelding")
+
+Produkteier meldte at v0.1.11 ikke løste KI-gjenkjenningen fullt ut på
+mobil — nå uten feilmelding i det hele tatt, bare "ingen artsforslag".
+
+**Rotårsak, funnet ved kodegjennomgang (ikke reprodusert live — ikke
+tilgang til en ekte iPhone)**: to uavhengige steder i `js/app.js` kunne
+gi et helt stille "ingen artsforslag"-utfall:
+
+1. **`kjorKiGjenkjenning()` skilte ikke mellom "KI kjørte OK, fant ingen
+   god kandidat" og "KI-kallet feilet teknisk"** (nettverk/auth/
+   tidsavbrudd) — begge satte `pendingKiResultat = null`, som rendret
+   IDENTISK tekst ("Fant ikke arten automatisk. Velg art manuelt under.")
+   i `renderRegisterPanel()`. En reell feil (f.eks. en 401, eller en CORS-
+   feil) så dermed nøyaktig ut som et legitimt "ingen treff"-svar.
+2. **`compressImage()` manglet `img.onerror`** — hvis nettleseren ikke
+   klarte å dekode det valgte bildet i en `<img>` (mistenkt: ekte HEIC-
+   bilder valgt fra Bilder-appen på iOS, til forskjell fra et kamera-opptak
+   som normalt konverteres til JPEG av OS-et før input-eventet), hang hele
+   løftet for alltid — INGEN kode kjørte noensinne igjen, ikke engang
+   `kjorKiGjenkjenning()` sin try/catch, siden feilen oppsto FØR den i det
+   hele tatt ble kalt.
+
+**Fiks**:
+- `pendingKiFeil` er en ny, egen tilstand — skiller nå "ingen god
+  kandidat" fra "teknisk feil" i UI-et. Et feilet KI-kall viser nå
+  `⚠️ KI-gjenkjenning feilet: <faktisk feilmelding>` med en "Prøv KI på
+  nytt"-knapp, i stedet for å se ut som et normalt nullsvar.
+- `compressImage()` har nå `img.onerror` + et 10-sekunders tidsavbruddsvern
+  — en bilde-dekodingsfeil gir nå en synlig feilmelding i stedet for å
+  henge løpet stille. `onImageCaptured()` fanger denne feilen og åpner
+  registreringspanelet med feilmeldingen synlig, i stedet for at ingenting
+  merkbart skjer etter at et bilde velges.
+
+**Ikke bekreftet løst** — dette gjør en eventuell gjenværende feil synlig
+og diagnostiserbar (feilteksten selv forteller hva som faktisk skjer:
+"Failed to fetch"/nettverksfeil, en fortsatt 401, en tidsavbrudds-tekst,
+eller en bilde-dekodingsfeil), men er ikke i seg selv en bekreftet fiks av
+et rotproblem jeg ikke kunne reprodusere lokalt. Neste steg: reprodusere
+på ekte mobil og lese av den nå synlige feilteksten (evt. koble iPhone til
+Mac og bruke Safaris Web Inspector for konsoll/nettverk).
+
 ## 0.1.11 — Kritisk: sesjonscookien virket ikke på mobil (Safari blokkerer cross-site-cookier)
 
 Produkteier rapporterte 401 på `/funn` ved oppstart og mislykket
