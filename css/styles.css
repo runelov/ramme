@@ -8,6 +8,16 @@
   --radius-md: 16px;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-top: env(safe-area-inset-top, 0px);
+  /* Satt av js/app.js sin oppdaterNettleserKromMargin() (visualViewport-
+     lytter) — env(safe-area-inset-bottom) dekker KUN hjem-indikator-området
+     på notch-telefoner, ikke selve nettleser-kromet (Safaris adresse-/
+     verktøylinje i vanlig nettleser-modus, altså IKKE installert som PWA).
+     Reell, rapportert bug 2026-08-28: midtstilte bunn-knapper (.fab)
+     nesten skjult av iPhone-knapperaden i vanlig Safari — 0px når appen
+     kjører installert (standalone), siden Safari-kromet da er borte helt.
+     Default 0px her sikrer at ingenting flytter seg før JS-en har rukket
+     å kjøre/på nettlesere uten visualViewport-støtte. */
+  --browser-chrome-bottom: 0px;
 }
 
 *{ box-sizing: border-box; }
@@ -94,7 +104,7 @@ body{
 
 .fab{
   position: fixed;
-  bottom: calc(28px + var(--safe-bottom));
+  bottom: calc(28px + var(--safe-bottom) + var(--browser-chrome-bottom));
   left: 50%;
   transform: translateX(-50%);
   z-index: 500;
@@ -111,7 +121,7 @@ body{
 
 .fabSecondary{
   position: fixed;
-  bottom: calc(40px + var(--safe-bottom));
+  bottom: calc(40px + var(--safe-bottom) + var(--browser-chrome-bottom));
   left: calc(50% + 72px);
   transform: translateX(-50%);
   z-index: 500;
@@ -244,7 +254,7 @@ body{
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  padding: 12px 24px calc(24px + var(--safe-bottom));
+  padding: 12px 24px calc(24px + var(--safe-bottom) + var(--browser-chrome-bottom));
   box-shadow: 0 -8px 32px rgba(0,0,0,0.18);
   animation: sheetUp 0.28s cubic-bezier(.2,.8,.2,1);
 }
@@ -715,7 +725,7 @@ body{
 
 .toast{
   position: fixed;
-  bottom: calc(120px + var(--safe-bottom));
+  bottom: calc(120px + var(--safe-bottom) + var(--browser-chrome-bottom));
   left: 50%; transform: translateX(-50%);
   z-index: 1000;
   background: var(--ink); color: #fff;
@@ -731,7 +741,7 @@ body{
 
 .updateBanner{
   position: fixed;
-  bottom: calc(190px + var(--safe-bottom));
+  bottom: calc(190px + var(--safe-bottom) + var(--browser-chrome-bottom));
   left: 50%; transform: translateX(-50%);
   z-index: 1000;
   display: flex; align-items: center; flex-wrap: wrap; justify-content: center;
@@ -773,7 +783,7 @@ body{
    OG en nyere versjon samtidig tilgjengelig). */
 .a2hsBanner{
   position: fixed;
-  bottom: calc(260px + var(--safe-bottom));
+  bottom: calc(260px + var(--safe-bottom) + var(--browser-chrome-bottom));
   left: 50%; transform: translateX(-50%);
   z-index: 1000;
   display: flex; align-items: center; flex-wrap: wrap; justify-content: center;

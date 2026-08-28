@@ -23,9 +23,20 @@ const RAMME_SENTRUM = L.latLngBounds(
 // parken fyller skjermen ved åpning i stedet for å drukne i et for stort
 // utsnitt — samme "startvisning vs. ytre panoreringsgrense"-idé som
 // Bondøyas BONDOYA_BOUNDS/ISLANDS_BOUNDS.
+//
+// STRAMMET INN 2026-08-28 (rapportert bug): senterpunktet var matematisk
+// riktig (gjennomsnittet av boksen under er 59.5985/10.6555, ~15m fra det
+// Overpass-verifiserte Ramme-punktet — ingen koordinatfeil), men den
+// opprinnelige boksen (~850×670m) var vid nok til at store deler av selve
+// Hvitsten sentrum også var synlig ved åpning — uten et satellittlag (se
+// README.md "Bevisste forenklinger", ingen Mapbox i v1) gir det topografiske
+// kartet ingen visuell markør som skiller eiendommen fra tettstedet rundt,
+// så det så ut som "sentrert på Hvitsten" selv om tallene stemte. Denne
+// boksen er fortsatt en PLACEHOLDER (~330×225m rundt punktet, ikke en
+// oppmålt eiendomsgrense) — se veien-videre.md "Eksakt kartavgrensning".
 const START_BOUNDS = L.latLngBounds(
-  [59.5955, 10.6480],
-  [59.6015, 10.6630]
+  [59.5970, 10.6533],
+  [59.6001, 10.6573]
 );
 
 const TOPO_MAX_ZOOM = 18;

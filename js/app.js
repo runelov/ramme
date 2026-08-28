@@ -10,7 +10,7 @@
 (function(){
 "use strict";
 
-const APP_VERSION = '0.1.0';
+const APP_VERSION = '0.1.1';
 const APP_BUILD_DATE = '2026-08-28';
 
 // Speilbilde av ARTSTYPER i worker/api/src/lib/taxonomi.js — appen har
@@ -47,6 +47,7 @@ let harNoensinneRegistrertFunn = false; // se sjekkA2HSBetingelse() — satt fra
 // ---------- oppstart ----------
 
 document.addEventListener('DOMContentLoaded', async () => {
+  wireDynamiskNettleserKromMargin();
   mapCtx = await initMapNarKlar();
   window.addEventListener('funn:selected', e => openDetail(e.detail));
 
@@ -69,6 +70,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW-registrering feilet', err));
   }
 });
+
+// Rapportert bug 2026-08-28: midtstilte bunn-knapper (.fab/.fabSecondary)
+// nesten helt skjult av iPhone sin knapperad når appen kjøres i vanlig
+// mobil Safari (IKKE installert/standalone). Rotårsak: CSS-variabelen
+// --safe-bottom (env(safe-area-inset-bottom)) dekker KUN hjem-indikator-
+// området på notch-telefoner — den vet ingenting om Safaris egen adresse-/
+// verktøylinje, som tar ekstra plass i selve nettleseren og som CSS ikke
+// har noen egen mekanisme for å måle. Fikset ved å lese den faktisk synlige
+// høyden via window.visualViewport (krymper når Safari-kromet vises) mot
+// window.innerHeight (layout-viewporten, upåvirket av kromet) — differansen
+// er omtrent hvor mye av bunnen som faktisk er dekket akkurat nå, satt som
+// --browser-chrome-bottom og brukt i tillegg til --safe-bottom (se
+// css/styles.css :root). Gir 0px (ingen endring) når appen kjøres
+// installert som PWA, siden Safari-kromet da er borte helt — kun et
+// problem i vanlig nettleser-modus, se veien-videre.md.
+function wireDynamiskNettleserKromMargin(){
+  if (!window.visualViewport) return; // eldre nettlesere: fallback er 0px (satt i CSS), ingen krasj
+  function oppdater(){
+    const vv = window.visualViewport;
+    const dekket = window.innerHeight - vv.height - vv.offsetTop;
+    document.documentElement.style.setProperty('--browser-chrome-bottom', `${Math.max(0, Math.round(dekket))}px`);
+  }
+  window.visualViewport.addEventListener('resize', oppdater);
+  window.visualViewport.addEventListener('scroll', oppdater);
+  oppdater();
+}
 
 // #map-containeren kan ha 0x0 størrelse akkurat idet denne kjører (viewport/
 // embedding ikke ferdig lagt ut ennå). Bondøyas js/app.js dokumenterer det

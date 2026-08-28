@@ -5,6 +5,28 @@ Versjonsnummereringen starter på nytt fra `0.1.0` her — Ramme er en egen,
 uavhengig repo-historie fra forgreningstidspunktet, følger ikke videre på
 Bondøyas løpende versjonsnummer (se CLAUDE.md).
 
+## 0.1.1 — To feil funnet ved faktisk mobiltesting
+
+Rapportert av produkteier rett etter første live-deploy:
+
+- **Bunnknapper (`.fab`/`.fabSecondary`) nesten skjult av iPhone sin
+  knapperad** i vanlig mobil Safari (ikke installert som PWA).
+  `--safe-bottom` (`env(safe-area-inset-bottom)`) dekker kun hjem-
+  indikator-området, ikke Safaris eget adresse-/verktøylinje-krom. Fikset
+  med en ny `--browser-chrome-bottom`-variabel satt dynamisk via
+  `window.visualViewport` (`js/app.js` `wireDynamiskNettleserKromMargin()`)
+  — måler faktisk dekket høyde i sanntid i stedet for å gjette et fast tall.
+  0px (ingen endring) når appen kjøres installert, siden Safari-kromet da
+  er borte.
+- **Kartet så ut til å være sentrert på Hvitsten, ikke Ramme.**
+  Senterpunktet var faktisk korrekt (~15m fra det Overpass-verifiserte
+  Ramme-punktet) — problemet var at startvisning-boksen (~850×670m) var
+  vid nok til å vise mye av selve Hvitsten sentrum også, og uten et
+  satellittlag (se "Bevisste forenklinger") er det ingen visuell markør som
+  skiller eiendommen fra tettstedet rundt. Strammet inn til ~330×225m
+  (`js/map.js` `START_BOUNDS`) — fortsatt en placeholder, ikke en oppmålt
+  eiendomsgrense, se veien-videre.md.
+
 ## 0.1.0 — Fase 7: første implementasjon (forgrening fra Bondøya)
 
 Første commit av selve appen. Forgrenet fra `mittbondøya-workspace/bondoya`
