@@ -1,5 +1,5 @@
 import { json } from '../lib/json.js';
-import { corsHeaders } from '../lib/cors.js';
+import { corsHeaders, sjekkOpprinnelse } from '../lib/cors.js';
 import { requireSession } from '../lib/session.js';
 import { sjekkOgTellIp } from '../lib/ratelimit.js';
 
@@ -8,10 +8,18 @@ import { sjekkOgTellIp } from '../lib/ratelimit.js';
 // ki.bondoya.no. Satt via Worker-variabelen KI_PROXY_URL (wrangler.toml
 // [vars] eller secret), ikke hardkodet, siden den faktiske *.workers.dev-
 // URL-en først finnes etter at ki-proxy-workeren er deployet.
+//
+// sjekkOpprinnelse() lagt til her (Bondøyas tilsvarende rute har den IKKE
+// — Bondøya bruker SameSite=Lax, som gir CSRF-beskyttelse gratis). Ramme
+// bruker SameSite=None (ADR 2) og trenger derfor den eksplisitte
+// Origin-sjekken på ALLE muterende ruter, ikke bare auth/funn/admin —
+// uten den kunne en ondsinnet side CSRF'e denne ruten og bruke opp
+// Anthropic-/Artsorakel-kredittene bak KI-proxyen.
 const MAKS_KI_PER_IP_TIME = 60;
 
 export async function gjenkjennArt({ request, env }) {
   const cors = corsHeaders(env);
+  if (!sjekkOpprinnelse(request, env)) return json({ error: 'Ugyldig forespørsel.' }, 403, cors);
   const bruker = await requireSession(request, env);
   if (!bruker) return json({ error: 'Ikke innlogget.' }, 401, cors);
 
