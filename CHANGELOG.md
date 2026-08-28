@@ -5,6 +5,26 @@ Versjonsnummereringen starter på nytt fra `0.1.0` her — Ramme er en egen,
 uavhengig repo-historie fra forgreningstidspunktet, følger ikke videre på
 Bondøyas løpende versjonsnummer (se CLAUDE.md).
 
+## 0.1.7 — Kartsenteret var feil sted, ikke bare unøyaktig
+
+Produkteier: sonene/kartsenteret virket å ligge i Hvitsten sentrum, ikke
+ved selve Ramme Gård. Riktig — det forrige senterpunktet
+(59.5985391°N/10.6553105°E) var en feil OSM-node valgt av Claude uten å
+bekrefte med produkteier først (se memory
+"geografiske-valg-krever-bekreftelse" og v0.1.6 sin advarsel om nettopp
+dette). Produkteier ga en Google Maps-lenke til den faktiske adressen
+("Rammeveien 100"), som løser seg til **59.6089546°N/10.6543468°E** — ca.
+1,2 km nord for det gamle, feilaktige punktet.
+
+`js/map.js` sitt kartsenter (`RAMME_SENTRUM`/`START_BOUNDS`) er rettet til
+det nye, bekreftede punktet — samme relative boksstørrelse som før, kun
+re-sentrert. Et påfølgende Overpass-søk rundt det nye punktet fant en
+rikt kartlagt skulpturhage (mange navngitte bygninger/dammer/kunstverk,
+inkl. selve "Havlystparken" som en egen, navngitt `leisure=garden`-
+polygon) — **`data/soner-ramme.json` er bevisst IKKE oppdatert i denne
+runden**: kandidatsonene presenteres for produkteier til bekreftelse
+først, ikke besluttet ensidig igjen (se v0.1.6 sin feil).
+
 ## 0.1.6 — Rammevandrer-sonene oppgradert fra gjettede firkanter til ekte OSM-geometri
 
 `data/soner-ramme.json` hadde tre rene, hånd-tegnede placeholder-firkanter

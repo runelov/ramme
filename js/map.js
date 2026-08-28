@@ -9,34 +9,39 @@
 // senere (worker/api/src/routes/tiles.js-mønsteret finnes fortsatt i
 // Bondøya som referanse) hvis produkteier ønsker satellittvisning.
 //
+// RETTET 2026-08-28 — FEIL ANKERPUNKT OPPDAGET av produkteier, ikke bare
+// unøyaktig: forrige senterpunkt (59.5985391°N, 10.6553105°E, en OSM-node
+// merket "Ramme fjord-hotel", valgt av Claude UTEN å bekrefte med
+// produkteier) lå i Hvitsten sentrum, ikke ved selve Ramme Gård/basen for
+// seminaret. Nytt senterpunkt er produkteiers EGEN Google Maps-lenke
+// ("Rammeveien 100", https://maps.app.goo.gl/NJavBqWLMofNiCrBA, løst opp
+// til 59.6089546°N/10.6543468°E) — ca. 1,2 km nord for det gamle,
+// feilaktige punktet. Se memory "geografiske-valg-krever-bekreftelse":
+// stedsspesifikke geografiske valg skal bekreftes med produkteier FØR de
+// bygges videre på, ikke antas fra en offentlig kartdatabase alene.
+//
 // PLACEHOLDER, IKKE endelig — se veien-videre.md "Eksakt kartavgrensning":
-// senterpunktet (59.5985391°N, 10.6553105°E) er hentet fra artsliste.md sin
-// geokoding av "Ramme fjord-hotel" (OpenStreetMap Overpass 2026-08-26).
-// maxBounds/minZoom under er en grov, praktisk boks rundt dette punktet —
-// IKKE en oppmålt eiendomsgrense. Avklares med produkteier/befaring.
+// maxBounds/minZoom under er en grov boks rundt DET NYE, bekreftede
+// punktet, samme relative størrelse som forrige (ikke selve størrelsen
+// diskutert/endret her) — IKKE en oppmålt eiendomsgrense. Rammevandrer-
+// sonene (data/soner-ramme.json) er IKKE oppdatert ennå — de venter på at
+// produkteier bekrefter konkrete kandidat-soner rundt det nye punktet før
+// noe nytt deployes, se veien-videre.md.
 const RAMME_SENTRUM = L.latLngBounds(
-  [59.5945, 10.6420],
-  [59.6025, 10.6690]
+  [59.6049546, 10.6408468],
+  [59.6129546, 10.6678468]
 );
 
 // Snevrere boks brukt kun til startvisningen (fitBounds), slik at tunet/
 // parken fyller skjermen ved åpning i stedet for å drukne i et for stort
 // utsnitt — samme "startvisning vs. ytre panoreringsgrense"-idé som
-// Bondøyas BONDOYA_BOUNDS/ISLANDS_BOUNDS.
-//
-// STRAMMET INN 2026-08-28 (rapportert bug): senterpunktet var matematisk
-// riktig (gjennomsnittet av boksen under er 59.5985/10.6555, ~15m fra det
-// Overpass-verifiserte Ramme-punktet — ingen koordinatfeil), men den
-// opprinnelige boksen (~850×670m) var vid nok til at store deler av selve
-// Hvitsten sentrum også var synlig ved åpning — uten et satellittlag (se
-// README.md "Bevisste forenklinger", ingen Mapbox i v1) gir det topografiske
-// kartet ingen visuell markør som skiller eiendommen fra tettstedet rundt,
-// så det så ut som "sentrert på Hvitsten" selv om tallene stemte. Denne
-// boksen er fortsatt en PLACEHOLDER (~330×225m rundt punktet, ikke en
-// oppmålt eiendomsgrense) — se veien-videre.md "Eksakt kartavgrensning".
+// Bondøyas BONDOYA_BOUNDS/ISLANDS_BOUNDS. Samme relative størrelse
+// (~330×225m) som tidligere brukt, kun re-sentrert på det nye, bekreftede
+// punktet — fortsatt en PLACEHOLDER, ikke en oppmålt eiendomsgrense, se
+// veien-videre.md "Eksakt kartavgrensning".
 const START_BOUNDS = L.latLngBounds(
-  [59.5970, 10.6533],
-  [59.6001, 10.6573]
+  [59.6074546, 10.6523468],
+  [59.6104546, 10.6563468]
 );
 
 const TOPO_MAX_ZOOM = 18;
