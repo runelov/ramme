@@ -23,7 +23,7 @@ database_id = "66e9d50c-7b59-4733-ae4c-a29e00e3710a"
 # namespace-tittelen i Cloudflare må være unik per konto.
 [[kv_namespaces]]
 binding = "RATE_LIMIT"
-id = "<SETT_INN_VED_DEPLOY>"
+id = "d2709a196c2140ccb54b90daeeefaa7e"
 
 [[r2_buckets]]
 binding = "IMAGES"
@@ -34,13 +34,13 @@ bucket_name = "ramme-bilder"
 # (Access-Control-Allow-Origin) og i sjekkOpprinnelse()-CSRF-sjekken på
 # muterende ruter, se lib/cors.js. PLACEHOLDER — bytt til den faktiske
 # `https://<bruker>.github.io`-verdien (uten sti) før deploy.
-ALLOWED_ORIGIN = "https://<SETT_INN_BRUKERNAVN>.github.io"
+ALLOWED_ORIGIN = "https://runelov.github.io"
 ENVIRONMENT = "production"
 
 # Rammes egen, uavhengige KI-proxy-Worker sin URL (ADR 3 — IKKE
 # ki.bondoya.no). PLACEHOLDER — bytt til den faktiske *.workers.dev-URL-en
 # etter at worker/ki-proxy er deployet.
-KI_PROXY_URL = "https://<SETT_INN_VED_DEPLOY>.workers.dev"
+KI_PROXY_URL = "https://ramme-ki-proxy.bondoya.workers.dev"
 
 # INVITASJONSKODE, KI_PROXY_SHARED_SECRET settes IKKE her — sett dem med:
 #   wrangler secret put INVITASJONSKODE

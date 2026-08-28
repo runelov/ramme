@@ -10,7 +10,7 @@ ANTHROPIC_MODEL = "claude-sonnet-5"
 # Rammes egen frontend-opphav (GitHub Pages default-domene) — PLACEHOLDER,
 # bytt før deploy. Denne workeren kalles av worker/api (server-til-server),
 # ikke direkte av nettleseren, men CORS-headeren settes likevel korrekt.
-ALLOWED_ORIGIN = "https://<SETT_INN_BRUKERNAVN>.github.io"
+ALLOWED_ORIGIN = "https://runelov.github.io"
 
 # ANTHROPIC_API_KEY, APP_SHARED_SECRET, ARTSORAKEL_ENDPOINT og
 # ARTSORAKEL_TOKEN settes IKKE her — sett dem med:

@@ -6,7 +6,7 @@
 // produksjons-URL-en.
 const API_BASE = ['localhost', '127.0.0.1'].includes(location.hostname)
   ? 'http://localhost:8787'
-  : 'https://<SETT_INN_VED_DEPLOY>.workers.dev'; // PLACEHOLDER — se README.md
+  : 'https://ramme-api.bondoya.workers.dev'; // PLACEHOLDER — se README.md
 
 async function kall(sti, opts) {
   const res = await fetch(`${API_BASE}${sti}`, { credentials: 'include', ...opts });
