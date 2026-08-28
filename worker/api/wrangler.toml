@@ -9,16 +9,18 @@ compatibility_date = "2026-08-28"
 # domenevalget reverseres på nytt (usannsynlig, se ADR 2, men beholdt som en
 # eksplisitt fraværende ting, ikke bare glemt).
 
-# PLACEHOLDER — sett til den faktiske database_id-en `wrangler d1 create
-# ramme` gir deg. IKKE en ekte D1-ressurs er opprettet av denne
-# implementasjonen (se oppdragets harde grenser).
+# Opprettet 2026-08-28 via scripts/forste-oppsett.sh (produkteier, region EEUR).
 [[d1_databases]]
 binding = "DB"
 database_name = "ramme"
-database_id = "<SETT_INN_VED_DEPLOY>"
+database_id = "66e9d50c-7b59-4733-ae4c-a29e00e3710a"
 
-# PLACEHOLDER — sett til den faktiske id-en `wrangler kv namespace create
-# RATE_LIMIT` gir deg.
+# PLACEHOLDER — sett til id-en `wrangler kv namespace create ramme-RATE_LIMIT`
+# gir deg (IKKE tittelen "RATE_LIMIT" alene — den er allerede tatt av
+# Bondøyas egen KV-namespace i samme Cloudflare-konto, se
+# scripts/forste-oppsett.sh). Bindingsnavnet under ("RATE_LIMIT", det koden
+# faktisk bruker som env.RATE_LIMIT) er uendret — kun selve
+# namespace-tittelen i Cloudflare må være unik per konto.
 [[kv_namespaces]]
 binding = "RATE_LIMIT"
 id = "<SETT_INN_VED_DEPLOY>"
