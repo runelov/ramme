@@ -5,6 +5,28 @@ Versjonsnummereringen starter på nytt fra `0.1.0` her — Ramme er en egen,
 uavhengig repo-historie fra forgreningstidspunktet, følger ikke videre på
 Bondøyas løpende versjonsnummer (se CLAUDE.md).
 
+## 0.1.8 — Rammevandrer-sonene er nå tegnet og bekreftet av produkteier selv
+
+Fortsettelse av v0.1.7: produkteier tegnet/korrigerte de foreslåtte
+kandidat-sonene direkte i Google My Maps (satellittbilde), i stedet for at
+Claude gjettet dem fra offentlig kartdata alene (se memory
+"geografiske-valg-krever-bekreftelse"). Eksportert som KML og lagt inn i
+`data/soner-ramme.json`.
+
+**Seks reelle, bekreftede soner** (ikke lenger `placeholder: true`):
+Havlystparken, Tunet/gårdsplassen, Skogholtet, Strandsonen, og to nye —
+**Edvard Munchs villa** og **Rammeveien** — som ikke var i noen tidligere
+plan, men som produkteier valgte å tegne som egne soner.
+
+`js/map.js` sine `RAMME_SENTRUM`/`START_BOUNDS` er utvidet til å romme
+alle seks sonenes faktiske utstrekning — Strandsonen og Rammeveien
+strekker seg vesentlig lenger sør enn det forrige utsnittet dekket, og
+ville vært utenfor panorerings-grensen uten denne endringen.
+
+Ingen kodeendring i selve badge-logikken — `beregnRammevandrerNiva()` er
+allerede skalert etter faktisk antall soner (nå 6: trinn 1 ved 3, trinn 2
+("Rammevandrer II") ved alle 6).
+
 ## 0.1.7 — Kartsenteret var feil sted, ikke bare unøyaktig
 
 Produkteier: sonene/kartsenteret virket å ligge i Hvitsten sentrum, ikke

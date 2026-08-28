@@ -20,28 +20,27 @@
 // stedsspesifikke geografiske valg skal bekreftes med produkteier FØR de
 // bygges videre på, ikke antas fra en offentlig kartdatabase alene.
 //
-// PLACEHOLDER, IKKE endelig — se veien-videre.md "Eksakt kartavgrensning":
-// maxBounds/minZoom under er en grov boks rundt DET NYE, bekreftede
-// punktet, samme relative størrelse som forrige (ikke selve størrelsen
-// diskutert/endret her) — IKKE en oppmålt eiendomsgrense. Rammevandrer-
-// sonene (data/soner-ramme.json) er IKKE oppdatert ennå — de venter på at
-// produkteier bekrefter konkrete kandidat-soner rundt det nye punktet før
-// noe nytt deployes, se veien-videre.md.
+// OPPDATERT 2026-08-29 — produkteier har selv tegnet og bekreftet de
+// faktiske Rammevandrer-sonene i Google My Maps (satellittbilde), se
+// data/soner-ramme.json og CHANGELOG.md. Grensene under er nå satt til å
+// romme alle seks sonenes faktiske utstrekning (lat 59.6014–59.6111,
+// lon 10.6501–10.6568), IKKE lenger en gjettet boks rundt ett enkelt
+// punkt — Strandsonen og Rammeveien strekker seg vesentlig lenger sør enn
+// det forrige (fortsatt placeholder-baserte) utsnittet dekket, og ville
+// vært utenfor panorerings-grensen uten denne utvidelsen.
 const RAMME_SENTRUM = L.latLngBounds(
-  [59.6049546, 10.6408468],
-  [59.6129546, 10.6678468]
+  [59.5989, 10.6461],
+  [59.6136, 10.6608]
 );
 
-// Snevrere boks brukt kun til startvisningen (fitBounds), slik at tunet/
-// parken fyller skjermen ved åpning i stedet for å drukne i et for stort
-// utsnitt — samme "startvisning vs. ytre panoreringsgrense"-idé som
-// Bondøyas BONDOYA_BOUNDS/ISLANDS_BOUNDS. Samme relative størrelse
-// (~330×225m) som tidligere brukt, kun re-sentrert på det nye, bekreftede
-// punktet — fortsatt en PLACEHOLDER, ikke en oppmålt eiendomsgrense, se
-// veien-videre.md "Eksakt kartavgrensning".
+// Snevrere boks brukt kun til startvisningen (fitBounds), slik at
+// eiendommen fyller skjermen ved åpning i stedet for å drukne i et for
+// stort utsnitt — samme "startvisning vs. ytre panoreringsgrense"-idé som
+// Bondøyas BONDOYA_BOUNDS/ISLANDS_BOUNDS. Satt til faktisk sone-utstrekning
+// + liten buffer, ikke en gjettet størrelse.
 const START_BOUNDS = L.latLngBounds(
-  [59.6074546, 10.6523468],
-  [59.6104546, 10.6563468]
+  [59.6006, 10.6486],
+  [59.6119, 10.6583]
 );
 
 const TOPO_MAX_ZOOM = 18;

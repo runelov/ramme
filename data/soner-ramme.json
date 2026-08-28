@@ -1,71 +1,416 @@
 [
   {
-    "id": "tunet",
-    "navn": "Tunet / gårdsplassen",
-    "placeholder": true,
-    "notat": "Fortsatt en grov, hånd-tegnet firkant (IKKE en oppmålt eiendomsgrense) — i motsetning til de tre andre sonene under er ingen tydelig avgrenset OSM-polygon funnet for selve tunet/gårdsplassen ved et Overpass-søk 2026-08-28 (kun et enkelt punkt, en gammel telefonkiosk ved node 670824768, lat 59.598538/lon 10.655408 — samme sted som Rammes geokodede hotellpunkt). Boksen er sentrert rundt akkurat det punktet. Faktisk avgrensning krever fortsatt befaring/produkteier, se veien-videre.md 'Endelig sonedefinisjon for Rammevandrer-badgen'.",
-    "polygon": [
-      [59.5990, 10.6545],
-      [59.5990, 10.6561],
-      [59.5980, 10.6561],
-      [59.5980, 10.6545],
-      [59.5990, 10.6545]
-    ]
-  },
-  {
     "id": "havlystparken",
     "navn": "Havlystparken",
-    "placeholder": true,
-    "notat": "OPPGRADERT 2026-08-28 fra en hånd-tegnet firkant til en EKTE, kartlagt OSM-polygon (way 1521953111, leisure=park, hentet via Overpass), liggende rett nord for hotellpunktet — trolig selve Havlystparken, men IKKE bekreftet mot produkteiers egen kjennskap til eiendommen eller en offisiell eiendomsgrense. Fortsatt markert som placeholder av den grunnen, men et reelt steg opp fra en gjettet firkant.",
-    "kilde": "OpenStreetMap way 1521953111 (leisure=park), Overpass 2026-08-28",
+    "placeholder": false,
+    "notat": "Tegnet og bekreftet av produkteier selv 2026-08-29 i Google My Maps (satellittbilde), IKKE en gjettet form — se veien-videre.md/CHANGELOG.md for korrigeringsrunden (forrige senterpunkt/soner lå feil, i Hvitsten sentrum).",
+    "kilde": "Produkteier, Google My Maps (mid=1oDhoPyWn4WijwJNYDohxDOE-rBeThxI), 2026-08-29",
     "polygon": [
-      [59.598997, 10.655108],
-      [59.5991, 10.655375],
-      [59.599241, 10.655833],
-      [59.599274, 10.656302],
-      [59.599299, 10.656483],
-      [59.599205, 10.656669],
-      [59.599148, 10.656543],
-      [59.599163, 10.65641],
-      [59.599085, 10.656079],
-      [59.598916, 10.655909],
-      [59.59882, 10.655645],
-      [59.598781, 10.655354],
-      [59.598997, 10.655108]
+      [
+        59.607614,
+        10.654039
+      ],
+      [
+        59.607278,
+        10.653862
+      ],
+      [
+        59.607021,
+        10.653547
+      ],
+      [
+        59.606944,
+        10.653664
+      ],
+      [
+        59.606834,
+        10.653516
+      ],
+      [
+        59.606297,
+        10.653724
+      ],
+      [
+        59.606261,
+        10.653881
+      ],
+      [
+        59.605974,
+        10.654617
+      ],
+      [
+        59.605622,
+        10.655845
+      ],
+      [
+        59.606341,
+        10.655846
+      ],
+      [
+        59.606799,
+        10.656002
+      ],
+      [
+        59.607234,
+        10.656137
+      ],
+      [
+        59.607529,
+        10.656095
+      ],
+      [
+        59.607567,
+        10.656061
+      ],
+      [
+        59.607769,
+        10.656016
+      ],
+      [
+        59.607799,
+        10.65576
+      ],
+      [
+        59.607909,
+        10.655755
+      ],
+      [
+        59.607926,
+        10.655273
+      ],
+      [
+        59.607929,
+        10.655169
+      ],
+      [
+        59.607594,
+        10.655087
+      ],
+      [
+        59.607614,
+        10.654039
+      ]
     ]
   },
   {
-    "id": "strandsonen",
-    "navn": "Strandsonen",
-    "placeholder": true,
-    "notat": "OPPGRADERT 2026-08-28 fra en hånd-tegnet firkant til en EKTE OSM-sandstrand-polygon (way 670824769, natural=beach, surface=sand) rett vest/sørvest for hotellpunktet. NB: dette er kun ETT strandsegment nær hotellet, ikke hele Rammes strandlinje — OSM har flere separate beach-/bare_rock-polygoner litt lenger unna (nord og sør) som ikke er tatt med her. Polygonen er også ganske smal, så en unøyaktig GPS-posisjon kan i praksis falle utenfor selv om brukeren fysisk står på stranden — vurder å utvide/justere etter faktisk bruk under seminaret, ikke bare anta den er stor nok.",
-    "kilde": "OpenStreetMap way 670824769 (natural=beach), Overpass 2026-08-28",
+    "id": "tunet",
+    "navn": "Tunet / gårdsplassen",
+    "placeholder": false,
+    "notat": "Tegnet og bekreftet av produkteier selv 2026-08-29 i Google My Maps (satellittbilde), IKKE en gjettet form — se veien-videre.md/CHANGELOG.md for korrigeringsrunden (forrige senterpunkt/soner lå feil, i Hvitsten sentrum).",
+    "kilde": "Produkteier, Google My Maps (mid=1oDhoPyWn4WijwJNYDohxDOE-rBeThxI), 2026-08-29",
     "polygon": [
-      [59.598889, 10.654703],
-      [59.598924, 10.654613],
-      [59.599047, 10.6543],
-      [59.598981, 10.654014],
-      [59.598869, 10.654332],
-      [59.598627, 10.654744],
-      [59.598451, 10.655045],
-      [59.598608, 10.654973],
-      [59.598677, 10.654922],
-      [59.598743, 10.654874],
-      [59.598889, 10.654703]
+      [
+        59.61031,
+        10.654433
+      ],
+      [
+        59.610126,
+        10.65413
+      ],
+      [
+        59.609671,
+        10.654125
+      ],
+      [
+        59.609425,
+        10.653554
+      ],
+      [
+        59.608943,
+        10.653616
+      ],
+      [
+        59.608474,
+        10.653614
+      ],
+      [
+        59.608233,
+        10.654126
+      ],
+      [
+        59.607614,
+        10.654039
+      ],
+      [
+        59.607594,
+        10.655087
+      ],
+      [
+        59.607929,
+        10.655169
+      ],
+      [
+        59.60788,
+        10.655961
+      ],
+      [
+        59.607466,
+        10.656029
+      ],
+      [
+        59.607317,
+        10.656805
+      ],
+      [
+        59.608853,
+        10.656017
+      ],
+      [
+        59.609299,
+        10.655729
+      ],
+      [
+        59.60949,
+        10.655518
+      ],
+      [
+        59.609404,
+        10.655224
+      ],
+      [
+        59.609339,
+        10.654949
+      ],
+      [
+        59.609665,
+        10.654762
+      ],
+      [
+        59.609819,
+        10.654743
+      ],
+      [
+        59.61003,
+        10.654773
+      ],
+      [
+        59.610195,
+        10.654718
+      ],
+      [
+        59.61031,
+        10.654433
+      ]
     ]
   },
   {
     "id": "skogholtet",
     "navn": "Skogholtet",
-    "placeholder": true,
-    "notat": "NY SONE lagt til 2026-08-28 — fantes ikke i noen tidligere versjon av denne filen. konsept.md sitt opprinnelige forslag til soneliste nevnte 'skogholtet' som en mulig femte sone (sammen med Havlystparken/tunet/strandsonen/arboretet), men ingen geometri fantes for den før nå. Bygget fra en ekte, kartlagt OSM-løvskog-polygon (way 795946502, natural=wood, leaf_type=broadleaved) rett vest for Havlystparken-polygonen over. Svært liten (grovt ca. 15×20 meter) — vurder om den er stor nok til å være meningsfull som egen sone, eller om den bør slås sammen med Havlystparken ved en fremtidig befaring.",
-    "kilde": "OpenStreetMap way 795946502 (natural=wood), Overpass 2026-08-28",
+    "placeholder": false,
+    "notat": "Tegnet og bekreftet av produkteier selv 2026-08-29 i Google My Maps (satellittbilde), IKKE en gjettet form — se veien-videre.md/CHANGELOG.md for korrigeringsrunden (forrige senterpunkt/soner lå feil, i Hvitsten sentrum).",
+    "kilde": "Produkteier, Google My Maps (mid=1oDhoPyWn4WijwJNYDohxDOE-rBeThxI), 2026-08-29",
     "polygon": [
-      [59.599063, 10.65473],
-      [59.599083, 10.654566],
-      [59.599047, 10.6543],
-      [59.598924, 10.654613],
-      [59.599063, 10.65473]
+      [
+        59.61103,
+        10.653239
+      ],
+      [
+        59.610646,
+        10.653384
+      ],
+      [
+        59.610265,
+        10.653363
+      ],
+      [
+        59.609425,
+        10.653554
+      ],
+      [
+        59.609671,
+        10.654125
+      ],
+      [
+        59.610126,
+        10.65413
+      ],
+      [
+        59.61031,
+        10.654433
+      ],
+      [
+        59.610712,
+        10.654338
+      ],
+      [
+        59.61111,
+        10.654229
+      ],
+      [
+        59.61103,
+        10.653239
+      ]
+    ]
+  },
+  {
+    "id": "munchs_villa",
+    "navn": "Edvard Munchs villa",
+    "placeholder": false,
+    "notat": "Tegnet og bekreftet av produkteier selv 2026-08-29 i Google My Maps (satellittbilde), IKKE en gjettet form — se veien-videre.md/CHANGELOG.md for korrigeringsrunden (forrige senterpunkt/soner lå feil, i Hvitsten sentrum).",
+    "kilde": "Produkteier, Google My Maps (mid=1oDhoPyWn4WijwJNYDohxDOE-rBeThxI), 2026-08-29",
+    "polygon": [
+      [
+        59.606673,
+        10.651316
+      ],
+      [
+        59.606294,
+        10.651322
+      ],
+      [
+        59.606161,
+        10.651218
+      ],
+      [
+        59.606227,
+        10.650933
+      ],
+      [
+        59.606012,
+        10.650786
+      ],
+      [
+        59.605722,
+        10.651186
+      ],
+      [
+        59.605801,
+        10.652445
+      ],
+      [
+        59.606673,
+        10.651316
+      ]
+    ]
+  },
+  {
+    "id": "strandsonen",
+    "navn": "Strandsonen",
+    "placeholder": false,
+    "notat": "Tegnet og bekreftet av produkteier selv 2026-08-29 i Google My Maps (satellittbilde), IKKE en gjettet form — se veien-videre.md/CHANGELOG.md for korrigeringsrunden (forrige senterpunkt/soner lå feil, i Hvitsten sentrum).",
+    "kilde": "Produkteier, Google My Maps (mid=1oDhoPyWn4WijwJNYDohxDOE-rBeThxI), 2026-08-29",
+    "polygon": [
+      [
+        59.604634,
+        10.65186
+      ],
+      [
+        59.604614,
+        10.652458
+      ],
+      [
+        59.605437,
+        10.652809
+      ],
+      [
+        59.605754,
+        10.652473
+      ],
+      [
+        59.605703,
+        10.651173
+      ],
+      [
+        59.606044,
+        10.650622
+      ],
+      [
+        59.60628,
+        10.650984
+      ],
+      [
+        59.606781,
+        10.650851
+      ],
+      [
+        59.60677,
+        10.65008
+      ],
+      [
+        59.606669,
+        10.650077
+      ],
+      [
+        59.606403,
+        10.650487
+      ],
+      [
+        59.606165,
+        10.650397
+      ],
+      [
+        59.605802,
+        10.650374
+      ],
+      [
+        59.605164,
+        10.651108
+      ],
+      [
+        59.605381,
+        10.651403
+      ],
+      [
+        59.605589,
+        10.651406
+      ],
+      [
+        59.605623,
+        10.652026
+      ],
+      [
+        59.605532,
+        10.652031
+      ],
+      [
+        59.605033,
+        10.652197
+      ],
+      [
+        59.604819,
+        10.651897
+      ],
+      [
+        59.604634,
+        10.65186
+      ]
+    ]
+  },
+  {
+    "id": "rammeveien",
+    "navn": "Rammeveien",
+    "placeholder": false,
+    "notat": "Tegnet og bekreftet av produkteier selv 2026-08-29 i Google My Maps (satellittbilde), IKKE en gjettet form — se veien-videre.md/CHANGELOG.md for korrigeringsrunden (forrige senterpunkt/soner lå feil, i Hvitsten sentrum).",
+    "kilde": "Produkteier, Google My Maps (mid=1oDhoPyWn4WijwJNYDohxDOE-rBeThxI), 2026-08-29",
+    "polygon": [
+      [
+        59.605513,
+        10.656054
+      ],
+      [
+        59.605651,
+        10.655228
+      ],
+      [
+        59.604032,
+        10.655587
+      ],
+      [
+        59.601536,
+        10.65458
+      ],
+      [
+        59.601371,
+        10.655548
+      ],
+      [
+        59.603971,
+        10.656197
+      ],
+      [
+        59.605513,
+        10.656054
+      ]
     ]
   }
 ]
