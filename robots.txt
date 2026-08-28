@@ -1,0 +1,8 @@
+# Ramme er en ettsides app (SPA) for en lukket krets på 15-20 navngitte
+# kolleger for ett arbeidsseminar — ikke et innholdsnettsted som skal ha
+# søkemotorsynlighet. Blokkerer alt crawling, samme begrunnelse/mønster
+# som Bondøya (se mittbondøya-workspace/bondoya/robots.txt):
+# ingen offentlig lag i det hele tatt (enda strengere enn Bondøya), og
+# API-Workerne er egne opphav med sin egen vurdering.
+User-agent: *
+Disallow: /
