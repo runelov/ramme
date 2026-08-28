@@ -5,6 +5,28 @@ Versjonsnummereringen starter på nytt fra `0.1.0` her — Ramme er en egen,
 uavhengig repo-historie fra forgreningstidspunktet, følger ikke videre på
 Bondøyas løpende versjonsnummer (se CLAUDE.md).
 
+## 0.1.10 — Nytt appikon: løktårnet med torvtak
+
+Erstattet appikonet (`icons/icon-16/32/180/192/512.png`, `favicon.ico`) —
+det gamle var faktisk Bondøyas øy-silhuett, arvet uendret ved
+forgreningen og aldri byttet ut. Nytt motiv: løktårnet med kuppel, lykt
+og torvtak på Ramme gård, som Ramme faktisk er oppkalt etter.
+
+- Silhuett i sotsvart (tårnet er mørkbeiset tre, ikke lyst) på en varm
+  krembunn, med et grønt torvtak som tårnet står forankret i — ikke en
+  fritt­stående form. To runder med produkteier-tilbakemelding rettet
+  henholdsvis en synlig luftespalte mellom hals/kuppel og resten av
+  tårnet (en glipp fra en tidligere iterasjon i utkastfasen, aldri i
+  produksjon), og en for løsrevet torvtak-form som fikk taket til å se ut
+  som det svevde.
+- `favicon.ico` er nå ekte multi-størrelse (16+32), mot den forrige
+  enkelt-størrelse 48×48-filen.
+- `icons/icon-192.png`/`icon-512.png` er precachet i `sw.js` sin
+  `SHELL_FILES` uten egen `?v=`-cache-buster — eneste måten å tvinge
+  allerede installerte PWA-er til å hente det nye ikonet er å bumpe
+  `CACHE_NAME`, derfor patch-bump til `0.1.10` selv om ingen JS/CSS-logikk
+  endret seg i denne releasen.
+
 ## 0.1.9 — Badge-terskler skalert ned for et engangsseminar, "Årstidene rundt" fjernet
 
 Produkteier: Bondøyas badge-terskler (kalibrert for en flerårig hobby-app)
