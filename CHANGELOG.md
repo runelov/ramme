@@ -5,6 +5,20 @@ Versjonsnummereringen starter på nytt fra `0.1.0` her — Ramme er en egen,
 uavhengig repo-historie fra forgreningstidspunktet, følger ikke videre på
 Bondøyas løpende versjonsnummer (se CLAUDE.md).
 
+## 0.1.5 — v0.1.3-fiksen for "Hele gjengen" dekket kun ett av to duplikat-steder
+
+Rapportert av produkteier rett etter å ha satt `forventetDeltakere = 10`
+med kun 1 registrert funn: "Hele gjengen" viste seg likevel oppnådd, i
+"Min fremdrift"-panelet.
+
+**Rotårsak**: `erHeleGjengenOppnadd()` ble kalt fra to steder —
+`routes/leaderboard.js` (fikset i v0.1.3) og `lib/fremdrift.js` sin
+`beregnFremdrift()` (brukt av `/meg/fremdrift` og `/admin/fremdrift`) —
+v0.1.3-fiksen rettet kun det første. Se arkitektur.md ADR 14.
+
+**Fiks**: `lib/fremdrift.js` henter nå også `forventetDeltakere` og bruker
+den i stedet for `antallAktivt`, identisk med `routes/leaderboard.js`.
+
 ## 0.1.4 — Ingen kunne noensinne bli admin
 
 Rapportert av produkteier: "hvem er admin?" — svaret var ingen,

@@ -1,6 +1,7 @@
 import { ARTSTYPER, RODLISTE_LABELS } from './taxonomi.js';
 import { finnOy, alleSoner } from './oyer.js';
 import { beregnRammevandrerNiva, erHeleGjengenOppnadd } from './badges-ramme.js';
+import { hentForventetDeltakere } from './innstillinger.js';
 
 // Forket fra Bondøyas lib/fremdrift.js — se konsept.md "Poeng og badges —
 // Ramme-tilpasset". Beregnes on-the-fly ved hver forespørsel (ingen egen
@@ -126,17 +127,30 @@ export async function beregnFremdrift(brukerId, env) {
   // routes/leaderboard.js sin "X/Y har registrert"-indikator — hentet her
   // også slik at merket vises identisk i HVER brukers "Min fremdrift", ikke
   // bare i leaderboard-panelet.
-  const [antallAktivtRad, antallMedFunnRad] = await Promise.all([
+  //
+  // RETTET v0.1.5 (reell bug, funnet ved faktisk bruk RETT ETTER v0.1.3-
+  // fiksen): denne funksjonen hadde sin EGEN, separate
+  // erHeleGjengenOppnadd()-beregning, fortsatt mot antallAktivt (faktisk
+  // registrerte kontoer) — v0.1.3 fikset kun kallet i
+  // routes/leaderboard.js, ikke dette duplikatet her. Produkteier satte
+  // forventetDeltakere=10 med kun 1 registrert funn, og "Hele gjengen"
+  // viste seg likevel oppnådd i "Min fremdrift", fordi DENNE beregningen
+  // fortsatt brukte antallAktivt=1. Se arkitektur.md ADR 14 for full
+  // rotårsak (samme klasse feil som ADR 12/13 — en fiks gjort i én
+  // funksjon, men samme logikk fantes duplisert et annet sted som ikke ble
+  // søkt opp og rettet samtidig).
+  const [antallAktivtRad, antallMedFunnRad, forventetDeltakere] = await Promise.all([
     env.DB.prepare(`SELECT COUNT(*) AS antall FROM brukere WHERE slettet_tidspunkt IS NULL AND status = 'aktiv'`).first(),
     env.DB.prepare(
       `SELECT COUNT(DISTINCT funn.registrert_av_bruker_id) AS antall
        FROM funn JOIN brukere ON brukere.id = funn.registrert_av_bruker_id
        WHERE brukere.slettet_tidspunkt IS NULL AND brukere.status = 'aktiv'`
     ).first(),
+    hentForventetDeltakere(env),
   ]);
-  const antallAktivt = antallAktivtRad?.antall || 0;
+  const antallAktivt = antallAktivtRad?.antall || 0; // informasjon — IKKE brukt til heleGjengenOppnadd lenger
   const antallMedFunn = antallMedFunnRad?.antall || 0;
-  const heleGjengenOppnadd = erHeleGjengenOppnadd(antallMedFunn, antallAktivt);
+  const heleGjengenOppnadd = erHeleGjengenOppnadd(antallMedFunn, forventetDeltakere);
 
   const score = {
     registreringer: antallRegistreringer * POENG.REGISTRERING,
@@ -217,7 +231,7 @@ export async function beregnFremdrift(brukerId, env) {
     rodliste: { arter: rodlisteArter },
     oppdagetArter,
     rammevandrer: { antallBesokt: rammevandrer.antallBesokt, totalt: rammevandrer.totalt, soner: besokteSoner },
-    kollektiv: { antallMedFunn, antallAktivt, heleGjengenOppnadd },
+    kollektiv: { antallMedFunn, antallAktivt, forventetDeltakere, heleGjengenOppnadd },
     badges,
   };
 }
