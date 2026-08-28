@@ -10,7 +10,7 @@
 (function(){
 "use strict";
 
-const APP_VERSION = '0.1.3';
+const APP_VERSION = '0.1.4';
 const APP_BUILD_DATE = '2026-08-28';
 
 // Speilbilde av ARTSTYPER i worker/api/src/lib/taxonomi.js — appen har

@@ -58,6 +58,34 @@ export function normaliserKortnavn(kortnavn) {
   return (kortnavn || '').trim().toLowerCase();
 }
 
+// ---------- Admin-rolle ved registrering ----------
+//
+// REELL BUG funnet ved faktisk bruk (v0.1.4, se CHANGELOG.md): den
+// opprinnelige INSERT-en i routes/auth.js hardkodet rolle='bruker' for
+// ENHVER ny konto — ingen kode noe sted satte noen til 'admin'. Under
+// Bondøyas gamle modell (admin oppretter alle kontoer manuelt via
+// `wrangler d1 execute`) var ikke dette et problem — admin-kontoen ble
+// opprettet med rolle='admin' i den kommandoen. Selvregistrering (ADR 11)
+// fjernet den manuelle opprettelsen helt, uten å erstatte den med noen vei
+// til admin-rollen — resultat: ingen kunne noensinne logge inn som admin,
+// inkludert produkteier selv.
+//
+// Løsning: FØRSTE registrerte bruker (antallEksisterendeBrukere === 0 idet
+// registreringen skjer) blir automatisk admin. Akseptert restrisiko,
+// bevisst vurdert: hvis invitasjonskoden lekker FØR produkteier selv
+// registrerer seg, kan i prinsippet en annen person "stjele" admin-rollen
+// ved å registrere seg først. Lav reell risiko her — koden distribueres
+// først til de 15-20 etter at produkteier allerede har satt opp appen (og
+// dermed alt registrert seg selv først i praksis) — men noteres eksplisitt
+// i arkitektur.md, ikke stilltiende akseptert. Et sjeldent race (to
+// samtidige "første"-registreringer) kan i teorien gi to admins i stedet
+// for én — ikke skadelig (admin kan uansett ikke skade andre enn ved
+// bevisst moderasjon), ikke verdt kompleksiteten en atomisk sperre ville
+// krevd på denne skalaen (15-20 brukere).
+export function avgjorRolleVedRegistrering(antallEksisterendeBrukere) {
+  return antallEksisterendeBrukere === 0 ? 'admin' : 'bruker';
+}
+
 export const KORTNAVN_MAKS_LENGDE = 30;
 
 // Enkel lengde-/tegnbegrensning ved registrering, jf.

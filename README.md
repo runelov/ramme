@@ -55,12 +55,19 @@ git config core.hooksPath .githooks
 
 ### Opprette den første admin-brukeren
 
-Registrering via appen oppretter alltid `rolle='bruker'`. Opprett/promoter
-en admin manuelt (samme mønster som Bondøya):
+**Rettet v0.1.4** (var en reell bug — se CHANGELOG.md og arkitektur.md
+ADR 13): den **første** som noensinne registrerer seg via appen blir nå
+automatisk admin (`lib/pin.js` sin `avgjorRolleVedRegistrering()`) — ingen
+manuell handling nødvendig i normale tilfeller. **Registrer deg selv
+FØRST**, før du deler invitasjonskoden med noen andre.
+
+Manuell promotering/gjenoppretting (kun nødvendig hvis den automatiske
+tildelingen av en eller annen grunn ikke traff riktig person — f.eks. etter
+en D1-nullstilling der noen andre rakk å registrere seg "først" på nytt,
+eller for en konto opprettet FØR v0.1.4-fiksen):
 
 ```bash
-# etter at brukeren har registrert seg selv via appen:
-npx wrangler d1 execute ramme --local --command \
+npx wrangler d1 execute ramme --remote --command \
   "UPDATE brukere SET rolle = 'admin' WHERE kortnavn_normalisert = 'ditt-kortnavn'"
 ```
 

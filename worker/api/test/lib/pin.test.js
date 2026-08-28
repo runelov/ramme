@@ -7,7 +7,20 @@ import {
   normaliserKortnavn,
   sammenlignPin,
   avgjorRegistreringUtfall,
+  avgjorRolleVedRegistrering,
 } from '../../src/lib/pin.js';
+
+describe('avgjorRolleVedRegistrering', () => {
+  test('første bruker (0 eksisterende) blir admin', () => {
+    assert.equal(avgjorRolleVedRegistrering(0), 'admin');
+  });
+  test('andre bruker (1 eksisterende) blir vanlig bruker', () => {
+    assert.equal(avgjorRolleVedRegistrering(1), 'bruker');
+  });
+  test('tjuende bruker blir fortsatt vanlig bruker', () => {
+    assert.equal(avgjorRolleVedRegistrering(19), 'bruker');
+  });
+});
 
 describe('erGyldigPin', () => {
   test('godtar 6 sifre', () => assert.equal(erGyldigPin('123456'), true));

@@ -5,6 +5,25 @@ Versjonsnummereringen starter på nytt fra `0.1.0` her — Ramme er en egen,
 uavhengig repo-historie fra forgreningstidspunktet, følger ikke videre på
 Bondøyas løpende versjonsnummer (se CLAUDE.md).
 
+## 0.1.4 — Ingen kunne noensinne bli admin
+
+Rapportert av produkteier: "hvem er admin?" — svaret var ingen,
+inkludert produkteier selv, etter å ha registrert seg og prøvd å sette
+`forventetDeltakere` (v0.1.3).
+
+**Rotårsak**: `routes/auth.js` sin `INSERT INTO brukere`-setning hardkodet
+`rolle='bruker'` for enhver ny konto — ingen kode noensinne satte
+`rolle='admin'`. Enda en ripple-effekt av ADR 11 (selvregistrering
+erstattet Bondøyas admin-oppretter-alle-kontoer-manuelt-modell, der
+admin-rollen ble satt eksplisitt i den manuelle kommandoen — se
+arkitektur.md ADR 13 for full sammenheng med ADR 12, funnet timer
+tidligere samme kveld, samme rotårsak-klasse).
+
+**Fiks**: `lib/pin.js` sin nye `avgjorRolleVedRegistrering()` (testet, ren
+funksjon) — **første registrerte bruker blir automatisk admin**.
+Produkteiers eksisterende testkonto (opprettet før denne fiksen) ble
+promotert manuelt, én gang, via `wrangler d1 execute --remote`.
+
 ## 0.1.3 — To badge-bugs funnet ved faktisk bruk rett etter KI-fiksen
 
 Rapportert av produkteier: (1) "Oppdageren" utløste ikke selv om han var

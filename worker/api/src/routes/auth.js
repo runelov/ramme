@@ -3,7 +3,7 @@ import { corsHeaders, sjekkOpprinnelse } from '../lib/cors.js';
 import { sha256Hex, timingSafeEqual } from '../lib/crypto.js';
 import { sjekkOgTellRegistreringsForsok, sjekkOgTellPinForsok } from '../lib/ratelimit.js';
 import { opprettSesjon, sesjonCookieHeader, slettSesjonCookieHeader, slettSesjon } from '../lib/session.js';
-import { erGyldigPin, erGyldigKortnavn, normaliserKortnavn, sammenlignPin, avgjorRegistreringUtfall } from '../lib/pin.js';
+import { erGyldigPin, erGyldigKortnavn, normaliserKortnavn, sammenlignPin, avgjorRegistreringUtfall, avgjorRolleVedRegistrering } from '../lib/pin.js';
 
 // HELT NY KODE for Ramme (arkitektur.md ADR 11) — IKKE en fork av Bondøyas
 // beOmLenke()/verifiser(), bruker ikke lib/epost.js/lib/turnstile.js i det
@@ -86,12 +86,21 @@ export async function registrer({ request, env }) {
   }
 
   // opprettNyKonto
+  // REELL BUG rettet v0.1.4 (se lib/pin.js sin avgjorRolleVedRegistrering()
+  // og CHANGELOG.md): rolle ble tidligere hardkodet til 'bruker' for enhver
+  // ny konto — ingen kunne noensinne bli admin. Første registrerte bruker
+  // blir nå automatisk admin.
+  const { antall: antallEksisterendeBrukere } = await env.DB.prepare(
+    'SELECT COUNT(*) AS antall FROM brukere WHERE slettet_tidspunkt IS NULL'
+  ).first();
+  const rolle = avgjorRolleVedRegistrering(antallEksisterendeBrukere);
+
   const pinHash = await sha256Hex(pin);
   const rad = await env.DB.prepare(
     `INSERT INTO brukere (kortnavn, kortnavn_normalisert, pin_hash, rolle, status)
-     VALUES (?, ?, ?, 'bruker', 'aktiv') RETURNING id, kortnavn, rolle`
+     VALUES (?, ?, ?, ?, 'aktiv') RETURNING id, kortnavn, rolle`
   )
-    .bind(kortnavn, kortnavnNormalisert, pinHash)
+    .bind(kortnavn, kortnavnNormalisert, pinHash, rolle)
     .first();
 
   const sesjonToken = await opprettSesjon(rad.id, env);
