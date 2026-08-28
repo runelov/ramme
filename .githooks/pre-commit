@@ -1,0 +1,61 @@
+#!/bin/sh
+# Portert fra fungifinder/.githooks/pre-commit (IKKE fra Bondøya, som
+# fortsatt ikke har en tilsvarende hook) — se CLAUDE.md "Pre-commit-hook
+# for versjonssynkronisering" for hvorfor Ramme sier JA til å portere denne
+# der Bondøya foreløpig ikke har fått den: Ramme sin brukstakt er
+# konsentrert til et par dager i september med alle 15-20 brukerne til
+# stede samtidig — ingen "neste deploy retter det"-sikkerhetsnett.
+#
+# Sjekker at APP_VERSION (js/app.js) er i sync med:
+#   1. Alle lokale ?v=-cache-busterne i index.html (css/styles.css og
+#      samtlige js/*.js-tagger — bredere enn FungiFinders tre filer, siden
+#      Ramme arver Bondøyas sw.js-mønster med flere shell-filer).
+#   2. sw.js sin CACHE_NAME.
+#   3. Alle ?v=-strengene i sw.js sin SHELL_FILES-liste.
+#
+# Aktiver denne (én gang per klon):
+#   git config core.hooksPath .githooks
+
+app_version=$(sed -n "s/.*APP_VERSION = '\([^']*\)'.*/\1/p" js/app.js)
+if [ -z "$app_version" ]; then
+  echo "pre-commit: fant ikke APP_VERSION i js/app.js — hopper over versjonssjekk" >&2
+  exit 0
+fi
+
+mismatch=0
+
+# 1. index.html sine lokale ?v=-tagger — alle css/js-filer nevnt i index.html
+#    med et lokalt (ikke unpkg.com CDN-pinnet) ?v=-suffiks.
+for fil in "css/styles.css" "js/api-client.js" "js/offline-queue.js" "js/ki-client.js" "js/map.js" "js/app.js"; do
+  v=$(grep -o "${fil}?v=[^\"']*" index.html | head -1 | sed "s|.*?v=||")
+  if [ "$v" != "$app_version" ]; then
+    echo "pre-commit: index.html sin ?v= for $fil er '$v', men APP_VERSION er '$app_version'" >&2
+    mismatch=1
+  fi
+done
+
+# 2. sw.js sin CACHE_NAME (forventet format: ramme-shell-v<versjon>)
+cache_version=$(sed -n "s/.*CACHE_NAME = 'ramme-shell-v\([^']*\)'.*/\1/p" sw.js)
+if [ "$cache_version" != "$app_version" ]; then
+  echo "pre-commit: sw.js sin CACHE_NAME har versjon '$cache_version', men APP_VERSION er '$app_version'" >&2
+  mismatch=1
+fi
+
+# 3. sw.js sin SHELL_FILES-liste — samme filsett som over, denne gangen inni sw.js selv.
+for fil in "css/styles.css" "js/app.js" "js/api-client.js" "js/offline-queue.js" "js/ki-client.js" "js/map.js"; do
+  v=$(grep -o "${fil}?v=[^\"']*" sw.js | head -1 | sed "s|.*?v=||" | sed "s|['\"].*||")
+  if [ "$v" != "$app_version" ]; then
+    echo "pre-commit: sw.js sin SHELL_FILES ?v= for $fil er '$v', men APP_VERSION er '$app_version'" >&2
+    mismatch=1
+  fi
+done
+
+if [ "$mismatch" -eq 1 ]; then
+  echo "" >&2
+  echo "Alle ?v=-cache-bustere (index.html + sw.js) og sw.js sin CACHE_NAME må" >&2
+  echo "bumpes sammen med APP_VERSION ved hver release — se README.md" >&2
+  echo "'Versjonering og caching'. Commit avbrutt." >&2
+  exit 1
+fi
+
+exit 0
