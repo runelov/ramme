@@ -7,10 +7,16 @@
 // ADR 2). En fremtidig endring i Bondøyas prompt/artsutvalg overføres IKKE
 // automatisk hit — vurder eksplisitt per endring.
 //
-// Kontrakt appen (js/ki-client.js) forventer — UENDRET fra Bondøya:
+// Kontrakt appen (js/ki-client.js) forventer:
 //   POST multipart/form-data: bilde=<fil>, kandidater=<JSON-array>
 //   Header: X-App-Secret: <delt hemmelighet>
-//   -> 200 { kandidater: [ { norsk, latinsk, artstype, konfidens, saertrekk }, ... ] }
+//   -> 200 { kandidater: [ { norsk, latinsk, artstype, taxonId, konfidens, saertrekk }, ... ] }
+// taxonId ER ENDRET FRA BONDØYA (v0.1.3, se losOppManglendeTaxonId() under
+// og CHANGELOG.md) — Bondøyas kontrakt har bevisst ALDRI taxonId på
+// KI-kandidater (ren bildegjenkjenning, badges er der en bonusfunksjon).
+// Ramme løser den opp server-side her i stedet, siden badges er selve
+// poenget med appen — taxonId kan fortsatt mangle (feltet er `undefined`,
+// ikke `null`) hvis Artskart-oppslaget ikke gir noe treff.
 //
 // HYBRID (Claude vision + Artsorakel/Artsdatabanken-Naturalis parallelt) er
 // forket UENDRET i STRUKTUR fra Bondøya — se der for hele
@@ -78,7 +84,8 @@ export default {
         return json({ error: claudeResultat.feil }, 502, cors);
       }
 
-      const endelig = await slaSammenKandidater(claudeResultat, artsorakelResultat);
+      const sammenslatt = await slaSammenKandidater(claudeResultat, artsorakelResultat);
+      const endelig = await losOppManglendeTaxonId(sammenslatt);
       return json({ kandidater: endelig }, 200, cors);
     } catch (e) {
       return json({ error: `Uventet feil i KI-proxyen: ${e.message}` }, 500, cors);
@@ -307,9 +314,41 @@ function lagArtsorakelKandidat(taxon, sannsynlighet, claudeKandidater) {
     norsk: taxon.norsk,
     latinsk: taxon.latinsk,
     artstype: taxon.artstype,
+    taxonId: taxon.taxonId, // MANGLET her tidligere (v0.1.2 og før) — se losOppManglendeTaxonId()
     konfidens: sannsynlighet,
     saertrekk: treff ? treff.saertrekk : 'Foreslått av Artsorakel — ingen bildespesifikk begrunnelse tilgjengelig.',
   };
+}
+
+// Reell bug funnet ved faktisk testing (v0.1.3, se CHANGELOG.md): Claude
+// vision gjør ren bildegjenkjenning og oppgir ALDRI en taxonId (samme
+// dokumenterte, aksepterte begrensning som i Bondøyas ki-proxy — se der for
+// samme kommentar). Uten taxonId kan verken "Oppdageren", Rødlistejeger
+// eller en fremtidig Sjeldenhetsjeger-utvidelse noensinne utløses for et
+// funn brukeren bare aksepterte KI-forslaget for, uten å bekrefte via
+// artssøket separat. Det var en akseptabel begrensning i Bondøya (badges
+// er en bonus der) — IKKE akseptabelt i Ramme, der badges er selve
+// poenget med appen. Løst her i stedet for i frontend: løs opp taxonId
+// server-side for ENHVER kandidat som mangler en (dekker både rene
+// Claude-kandidater og Artsorakel-kandidater fra FØR
+// lagArtsorakelKandidat()-fiksen over — begge veier er nå dekket), via
+// samme Artskart-taxon-oppslag som Artsorakel-stien allerede bruker.
+// Fail-open ved oppslagsfeil/ikke-treff: kandidaten beholdes UTEN taxonId
+// fremfor å forsvinne — bedre med et forslag brukeren kan velge manuelt
+// enn null kandidater.
+async function losOppManglendeTaxonId(kandidater) {
+  return Promise.all(
+    kandidater.map(async (k) => {
+      if (k.taxonId) return k;
+      const t = await losArtsorakelTaxon(k.latinsk).catch(() => null);
+      if (!t) return k;
+      // Overstyr Claude sin gjettede artstype med den autoritative
+      // taxonomi-utledningen når vi uansett har taxonId nå — samme prinsipp
+      // som worker/api/src/lib/taxonomi.js sin server-side-autoritative
+      // artstype-utledning fra taxonId ved lagring.
+      return { ...k, taxonId: t.taxonId, artstype: t.artstype };
+    })
+  );
 }
 
 // ---------- Delt ----------

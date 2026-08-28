@@ -1,7 +1,7 @@
 import { json } from '../lib/json.js';
 import { corsHeaders } from '../lib/cors.js';
 import { requireSession } from '../lib/session.js';
-import { erLeaderboardAktivert } from '../lib/innstillinger.js';
+import { erLeaderboardAktivert, hentForventetDeltakere } from '../lib/innstillinger.js';
 import { beregnFremdrift } from '../lib/fremdrift.js';
 import { erHeleGjengenOppnadd } from '../lib/badges-ramme.js';
 
@@ -14,9 +14,20 @@ import { erHeleGjengenOppnadd } from '../lib/badges-ramme.js';
 //    registrert funn (se ADR 5 for personvernbegrunnelsen).
 // 2. Kollektiv "X/Y har registrert"-teller (ux-skisse.md funn 2/konsept.md
 //    UX-beslutning 2) — samme datagrunnlag som "Hele gjengen"-badgen
-//    (COUNT DISTINCT bruker_id FRA funn mot totalt antall aktive brukere),
-//    kun uten den fulle rangerte listen. Styres av samme admin-bryter som
-//    resten av leaderboardet, ingen egen av/på-bryter.
+//    (COUNT DISTINCT bruker_id FRA funn), kun uten den fulle rangerte
+//    listen. Styres av samme admin-bryter som resten av leaderboardet,
+//    ingen egen av/på-bryter.
+//
+// RETTET v0.1.3 (reell bug funnet ved faktisk bruk, se CHANGELOG.md/
+// arkitektur.md ADR 12): "Y" i "X/Y" og nevneren for "Hele gjengen" var
+// opprinnelig antall FAKTISK REGISTRERTE kontoer (antallAktivt under) —
+// med selvregistrering (ADR 11) vokser det tallet dynamisk etter hvert som
+// folk melder seg på, så det var 1 (kun testbrukeren) idet samme bruker
+// registrerte sitt første funn, og badgen/telleren ble dermed trivielt
+// "oppnådd" med bare én person. Bruker nå et EGET, admin-satt måltall
+// (forventetDeltakere) i stedet — antallAktivt beholdes i responsen som
+// ren informasjon (nyttig for admin å se), men brukes ikke lenger til
+// "Hele gjengen"-beregningen.
 export async function hentLeaderboard({ request, env }) {
   const cors = corsHeaders(env);
   const bruker = await requireSession(request, env);
@@ -25,7 +36,7 @@ export async function hentLeaderboard({ request, env }) {
     return json({ error: 'Leaderboard er ikke aktivert.' }, 403, cors);
   }
 
-  const [{ results: brukereMedFunn }, antallAktivtRad, antallMedFunnRad] = await Promise.all([
+  const [{ results: brukereMedFunn }, antallAktivtRad, antallMedFunnRad, forventetDeltakere] = await Promise.all([
     env.DB.prepare(
       `SELECT id, kortnavn FROM brukere
        WHERE slettet_tidspunkt IS NULL AND status = 'aktiv'
@@ -41,6 +52,7 @@ export async function hentLeaderboard({ request, env }) {
        JOIN brukere ON brukere.id = funn.registrert_av_bruker_id
        WHERE brukere.slettet_tidspunkt IS NULL AND brukere.status = 'aktiv'`
     ).first(),
+    hentForventetDeltakere(env),
   ]);
 
   const rangering = await Promise.all(
@@ -64,8 +76,9 @@ export async function hentLeaderboard({ request, env }) {
       rangering,
       kollektiv: {
         antallMedFunn,
-        antallAktivt,
-        heleGjengenOppnadd: erHeleGjengenOppnadd(antallMedFunn, antallAktivt),
+        antallAktivt, // informasjon (faktisk registrerte kontoer så langt) — IKKE brukt til heleGjengenOppnadd lenger
+        forventetDeltakere, // admin-satt måltall, 0 = ikke satt av admin ennå
+        heleGjengenOppnadd: erHeleGjengenOppnadd(antallMedFunn, forventetDeltakere),
       },
     },
     200,

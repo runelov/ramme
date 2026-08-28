@@ -1,7 +1,7 @@
 import { json } from '../lib/json.js';
 import { corsHeaders, sjekkOpprinnelse } from '../lib/cors.js';
 import { requireAdmin } from '../lib/session.js';
-import { erLeaderboardAktivert, settLeaderboardAktivert } from '../lib/innstillinger.js';
+import { erLeaderboardAktivert, settLeaderboardAktivert, hentForventetDeltakere, settForventetDeltakere } from '../lib/innstillinger.js';
 import { beregnFremdrift } from '../lib/fremdrift.js';
 
 // Forket og TRIMMET fra Bondøyas routes/admin.js — se CLAUDE.md
@@ -91,7 +91,11 @@ export async function hentInnstillinger({ request, env }) {
   const admin = await requireAdmin(request, env);
   if (!admin) return json({ error: 'Krever admin-tilgang.' }, 403, cors);
 
-  return json({ leaderboardAktivert: await erLeaderboardAktivert(env) }, 200, cors);
+  return json(
+    { leaderboardAktivert: await erLeaderboardAktivert(env), forventetDeltakere: await hentForventetDeltakere(env) },
+    200,
+    cors
+  );
 }
 
 export async function oppdaterInnstillinger({ request, env }) {
@@ -106,12 +110,28 @@ export async function oppdaterInnstillinger({ request, env }) {
   } catch {
     return json({ error: 'Ugyldig forespørsel.' }, 400, cors);
   }
-  if (typeof body.leaderboardAktivert !== 'boolean') {
+
+  // Begge feltene er valgfrie i samme PATCH — samme fleksibilitet som
+  // Bondøyas tilsvarende rute (klienten sender i praksis alltid begge, se
+  // settAdminInnstillinger i js/api-client.js, men ruten skal ikke kreve det).
+  if (body.leaderboardAktivert !== undefined && typeof body.leaderboardAktivert !== 'boolean') {
     return json({ error: 'Ugyldig verdi for leaderboardAktivert.' }, 400, cors);
   }
+  if (body.forventetDeltakere !== undefined) {
+    const tall = Number(body.forventetDeltakere);
+    if (!Number.isFinite(tall) || tall < 0 || !Number.isInteger(tall)) {
+      return json({ error: 'forventetDeltakere må være et heltall ≥ 0.' }, 400, cors);
+    }
+  }
 
-  await settLeaderboardAktivert(env, body.leaderboardAktivert);
-  return json({ leaderboardAktivert: await erLeaderboardAktivert(env) }, 200, cors);
+  if (body.leaderboardAktivert !== undefined) await settLeaderboardAktivert(env, body.leaderboardAktivert);
+  if (body.forventetDeltakere !== undefined) await settForventetDeltakere(env, body.forventetDeltakere);
+
+  return json(
+    { leaderboardAktivert: await erLeaderboardAktivert(env), forventetDeltakere: await hentForventetDeltakere(env) },
+    200,
+    cors
+  );
 }
 
 // Fase B (arvet fra Bondøya, uendret mønster) — admin-oversikt over alles

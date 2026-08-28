@@ -5,6 +5,37 @@ Versjonsnummereringen starter på nytt fra `0.1.0` her — Ramme er en egen,
 uavhengig repo-historie fra forgreningstidspunktet, følger ikke videre på
 Bondøyas løpende versjonsnummer (se CLAUDE.md).
 
+## 0.1.3 — To badge-bugs funnet ved faktisk bruk rett etter KI-fiksen
+
+Rapportert av produkteier: (1) "Oppdageren" utløste ikke selv om han var
+først til å registrere steinsopp, (2) "Hele gjengen"/den kollektive "X/Y
+har registrert"-telleren viste seg oppnådd etter at kun én person hadde
+registrert ett funn.
+
+**Bug 1 — KI-forslag fikk aldri `taxonId`.** Uten `art_taxon_id` kan
+verken "Oppdageren", Rødlistejeger eller en fremtidig
+Sjeldenhetsjeger-utvidelse utløses. Dette er faktisk en dokumentert,
+*akseptert* begrensning i Bondøyas eget ki-proxy-opphav ("KI-kandidater
+har uansett aldri en taxonId ... som er korrekt") — helt riktig prioritert
+der, siden badges er en bonus oppå en allerede etablert app. I Ramme, der
+gamification er selve poenget med produktet, er samme begrensning langt
+mer skadelig. Løst i `worker/ki-proxy`: en ny `losOppManglendeTaxonId()`
+løser opp taxonId server-side mot Artskart for enhver kandidat som mangler
+en (dekker både rene Claude-forslag og et fra før eksisterende hull i
+Artsorakel-stien, `lagArtsorakelKandidat()`, som hentet taxonId men glemte
+å legge den i responsobjektet). Fail-open: en kandidat uten oppslagstreff
+beholdes fortsatt, bare uten taxonId, fremfor å forsvinne.
+
+**Bug 2 — "Hele gjengen" brukte feil nevner etter auth-byttet.**
+Se `arkitektur.md` ADR 12 for full rotårsak: målet var opprinnelig antall
+FAKTISK registrerte kontoer, som var riktig da Bondøyas admin-oppretter-
+alle-kontoer-modell fortsatt gjaldt, men feil etter at ADR 11 byttet til
+selvregistrering (det tallet vokser dynamisk gjennom seminaret i stedet
+for å være kjent fra dag 1). Ny admin-innstilling `forventetDeltakere`
+(innstillinger-fanen) erstatter det som nevner for både "Hele gjengen" og
+"X/Y har registrert"-telleren. **Krever admin-handling før seminaret** —
+se veien-videre.md, tallet er ikke satt automatisk.
+
 ## 0.1.2 — KI-artsgjenkjenning ga aldri treff: Worker-til-Worker-fetch mot workers.dev er upålitelig
 
 Rapportert av produkteier: KI-artsgjenkjenning returnerte konsekvent ingen

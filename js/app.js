@@ -10,7 +10,7 @@
 (function(){
 "use strict";
 
-const APP_VERSION = '0.1.2';
+const APP_VERSION = '0.1.3';
 const APP_BUILD_DATE = '2026-08-28';
 
 // Speilbilde av ARTSTYPER i worker/api/src/lib/taxonomi.js — appen har
@@ -447,9 +447,20 @@ async function renderLeaderboard(){
   // Navnløs "X/Y har registrert"-indikator (konsept.md UX-beslutning 2) —
   // ingen navn, kun tallene. "Hele gjengen!" vises i tillegg når oppnådd,
   // samme datagrunnlag som badgen med samme navn i "Min fremdrift".
-  kollektivEl.textContent = kollektiv.heleGjengenOppnadd
-    ? `🎉 ${kollektiv.antallMedFunn}/${kollektiv.antallAktivt} har registrert — Hele gjengen!`
-    : `${kollektiv.antallMedFunn}/${kollektiv.antallAktivt} har registrert minst ett funn.`;
+  //
+  // RETTET v0.1.3: "Y" er nå kollektiv.forventetDeltakere (admin-satt
+  // måltall), IKKE lenger antallAktivt (faktisk registrerte kontoer så
+  // langt) — se routes/leaderboard.js for hvorfor det opprinnelige tallet
+  // var en reell bug med selvregistrering (ADR 11). Vis en tydelig
+  // "ikke satt opp ennå"-tekst i stedet for et misvisende 0-tall når admin
+  // ikke har satt måltallet ennå, i stedet for å late som 0 er en gyldig verdi.
+  if (kollektiv.forventetDeltakere <= 0) {
+    kollektivEl.textContent = `${kollektiv.antallMedFunn} har registrert minst ett funn (forventet antall deltakere ikke satt av admin ennå).`;
+  } else {
+    kollektivEl.textContent = kollektiv.heleGjengenOppnadd
+      ? `🎉 ${kollektiv.antallMedFunn}/${kollektiv.forventetDeltakere} har registrert — Hele gjengen!`
+      : `${kollektiv.antallMedFunn}/${kollektiv.forventetDeltakere} har registrert minst ett funn.`;
+  }
 
   const rader = rangering.map((r, i) => {
     const duSelv = brukerCache && r.kortnavn === brukerCache.kortnavn;
@@ -512,6 +523,24 @@ function wireAdminPanel(){
       el('leaderboardAktivertBtn').disabled = false;
     }
   });
+
+  // Lagt til v0.1.3 sammen med forventetDeltakere-fiksen (arkitektur.md
+  // ADR 12) — samme lagre-knapp-mønster som resten av admin-innstillingene,
+  // men et talledit-felt i stedet for en av/på-bryter.
+  el('forventetDeltakereLagreBtn').addEventListener('click', async () => {
+    const input = el('forventetDeltakereInput');
+    const verdi = parseInt(input.value, 10);
+    if (!Number.isFinite(verdi) || verdi < 0) { showToast('Skriv inn et heltall ≥ 0.'); return; }
+    el('forventetDeltakereLagreBtn').disabled = true;
+    try {
+      adminInnstillingerCache = await window.ApiClient.settAdminInnstillinger({ forventetDeltakere: verdi });
+      showToast(`Forventet antall deltakere satt til ${verdi}.`);
+    } catch (e) {
+      showToast('Feil: ' + e.message);
+    } finally {
+      el('forventetDeltakereLagreBtn').disabled = false;
+    }
+  });
 }
 
 async function renderInnstillinger(){
@@ -525,6 +554,7 @@ async function renderInnstillinger(){
     return;
   }
   oppdaterLeaderboardKnapp();
+  el('forventetDeltakereInput').value = adminInnstillingerCache.forventetDeltakere || 0;
   lbBtn.disabled = false;
 }
 

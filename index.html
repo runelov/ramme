@@ -18,7 +18,7 @@
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-<link rel="stylesheet" href="css/styles.css?v=0.1.2">
+<link rel="stylesheet" href="css/styles.css?v=0.1.3">
 </head>
 <body>
 
@@ -121,6 +121,14 @@
       <p class="hint">Når på: alle innloggede kan se en rangert liste over poengsum, arter og oppnådde merker for deltakere med minst ett registrert funn (se 🏆-panelet), pluss en kollektiv "X/Y har registrert"-teller. Slås PÅ fra dag 1 i Ramme.</p>
       <button id="leaderboardAktivertBtn" class="secondaryBtn"></button>
     </div>
+    <div class="findRow" style="display:flex;flex-direction:column;align-items:stretch;gap:6px;margin-top:10px">
+      <div><strong>Forventet antall deltakere</strong></div>
+      <p class="hint">Brukes som "Y" i "X/Y har registrert"-telleren og som måltall for "Hele gjengen"-merket — IKKE antall kontoer opprettet så langt (det tallet vokser dynamisk etter hvert som folk registrerer seg selv med invitasjonskoden, se arkitektur.md ADR 12). Sett dette til det faktiske antallet kolleger som kommer på seminaret, FØR seminarstart.</p>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input id="forventetDeltakereInput" type="number" min="0" step="1" style="width:80px" />
+        <button id="forventetDeltakereLagreBtn" class="secondaryBtn">Lagre</button>
+      </div>
+    </div>
   </div>
 
   <div id="adminTab-brukere" class="adminTabPanel">
@@ -190,10 +198,10 @@
   integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <!-- exifr: leser EXIF GPS/dato fra bilder valgt fra kamerarullen (etterregistrering) -->
 <script src="https://unpkg.com/exifr@7.1.3/dist/lite.umd.js"></script>
-<script src="js/api-client.js?v=0.1.2"></script>
-<script src="js/offline-queue.js?v=0.1.2"></script>
-<script src="js/ki-client.js?v=0.1.2"></script>
-<script src="js/map.js?v=0.1.2"></script>
-<script src="js/app.js?v=0.1.2"></script>
+<script src="js/api-client.js?v=0.1.3"></script>
+<script src="js/offline-queue.js?v=0.1.3"></script>
+<script src="js/ki-client.js?v=0.1.3"></script>
+<script src="js/map.js?v=0.1.3"></script>
+<script src="js/app.js?v=0.1.3"></script>
 </body>
 </html>

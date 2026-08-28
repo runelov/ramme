@@ -66,14 +66,23 @@ export function beregnRammevandrerNiva(besokteSoneIder, alleSoner) {
 //
 // antallMedFunn: COUNT(DISTINCT bruker_id) fra funn (kun aktive, ikke
 // slettede brukere).
-// antallAktiveBrukere: totalt antall aktive, ikke-slettede brukere.
+// maltall: **v0.1.3 — RETTET, se CHANGELOG.md/arkitektur.md ADR 12**: dette
+// var opprinnelig "totalt antall aktive, ikke-slettede brukere" (faktisk
+// registrerte kontoer). Med selvregistrering (ADR 11) vokser det tallet
+// dynamisk etter hvert som folk melder seg på med invitasjonskoden — det
+// er derfor IKKE en stabil "alle forventede deltakere"-telling, og ga en
+// reell bug (badgen "oppnådd" for kun én person, se CHANGELOG). Kalleren
+// (routes/leaderboard.js) sender nå inn `forventetDeltakere` — et eget,
+// admin-satt måltall — i stedet. Selve funksjonen her er uendret og vet
+// ingenting om HVOR tallet kommer fra, bare at det skal representere et
+// stabilt mål å nå, ikke en løpende telling.
 //
-// antallAktiveBrukere === 0 håndteres eksplisitt som "ikke oppnådd" — en
-// naiv antallMedFunn >= antallAktiveBrukere-sammenligning ville gitt
-// 0 >= 0 === true (alltid "oppnådd" før noen i det hele tatt har
-// registrert seg), som er en produktfeil, ikke en teknisk detalj: badgen
-// skal aldri fremstå oppnådd før det finnes noen å oppnå den sammen med.
-export function erHeleGjengenOppnadd(antallMedFunn, antallAktiveBrukere) {
-  if (!antallAktiveBrukere || antallAktiveBrukere <= 0) return false;
-  return antallMedFunn >= antallAktiveBrukere;
+// maltall === 0 håndteres eksplisitt som "ikke oppnådd" (både "ingen har
+// registrert seg ennå" i den gamle semantikken, og "admin har ikke satt
+// et måltall ennå" i den nye) — en naiv antallMedFunn >= maltall-
+// sammenligning ville gitt 0 >= 0 === true (alltid "oppnådd" fra start),
+// som er en produktfeil, ikke en teknisk detalj.
+export function erHeleGjengenOppnadd(antallMedFunn, maltall) {
+  if (!maltall || maltall <= 0) return false;
+  return antallMedFunn >= maltall;
 }
