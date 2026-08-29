@@ -1,13 +1,34 @@
 // js/map.js
 // Leaflet-kart begrenset til Ramme-eiendommen (Hvitsten, Vestby kommune) —
 // forket fra Bondøyas js/map.js, men FORENKLET: kun Kartverket topografisk
-// (gratis, tokenfritt), INGEN Mapbox-satellittlag/flis-proxy. Dette er en
+// (gratis, tokenfritt) i utgangspunktet, INGEN Mapbox-satellittlag/
+// flis-proxy (Bondøyas betalte, sesjonsbeskyttede løsning). Dette var en
 // bevisst, dokumentert forenkling for v1 (se README.md "Bevisste
-// forenklinger") — ikke nevnt som et krav i konsept.md/arkitektur.md, og
-// koster en egen Mapbox-token-/kostnadsoppsett en ren topografisk visning
-// ikke trenger for et 1-2 dagers hagepark-seminar. Enkel å legge til igjen
-// senere (worker/api/src/routes/tiles.js-mønsteret finnes fortsatt i
-// Bondøya som referanse) hvis produkteier ønsker satellittvisning.
+// forenklinger") — ikke nevnt som et krav i konsept.md/arkitektur.md.
+//
+// OPPDATERT 2026-08-29 — lagvelgeren lagt til likevel, produkteier savnet
+// den fra Bondøya. Undersøkt grundig FØR noe ble bygget (se CHANGELOG.md):
+// Kartverkets EGEN flyfoto-tjeneste er IKKE faktisk gratis/tokenfri slik
+// topo-laget er — verifisert direkte mot tre reelle endepunkter:
+//   - cache.kartverket.no (samme tjeneste som topo-laget under) har
+//     KUN topo/topograatone/toporaster/sjøkartraster — ingen flyfoto,
+//     bekreftet mot tjenestens egen WMTSCapabilities.xml.
+//   - tilecache.norgeibilder.no (den faktiske flyfoto-tjenesten) svarte
+//     `{"error":{"code":499,"message":"Token Required"}}` på et ekte kall.
+//   - wms.geonorge.no/skwms1/wms.nib* (eldre WMS-variant) svarte med en
+//     ekte autentiseringsfeil — IP-hvitelisting for Norge digitalt-
+//     partnere, ikke åpent for alle. Selv token-siden
+//     (services.norgeibilder.no/token) krever et eksisterende ArcGIS
+//     Enterprise-brukernavn/passord, ikke selvbetjent registrering.
+// Endte i stedet på Esri sin World Imagery — en global satellittjeneste
+// som FAKTISK er gratis og tokenfri (ingen konto, ingen nøkkel), verifisert
+// med et ekte flis-kall over Ramme sin egen posisjon før dette ble bygget
+// inn. Ulempen: Esri-merket (ikke Kartverket), og trolig lavere/eldre
+// oppløsning enn et ekte norsk flyfoto-opptak — akseptabel avveining for et
+// gratis alternativ til et 1-2 dagers seminar, ikke en løsning å bygge
+// videre på for et produkt som trenger ekte norsk ortofoto-kvalitet (se
+// "Engangsverktøy eller gjenbruk?" — vurder Mapbox eller en faktisk
+// Norge-digitalt-avtale da).
 //
 // RETTET 2026-08-28 — FEIL ANKERPUNKT OPPDAGET av produkteier, ikke bare
 // unøyaktig: forrige senterpunkt (59.5985391°N, 10.6553105°E, en OSM-node
@@ -43,7 +64,11 @@ const START_BOUNDS = L.latLngBounds(
   [59.6119, 10.6583]
 );
 
-const TOPO_MAX_ZOOM = 18;
+// Felles maks-zoom for begge kartlag under (Leafletes map.setMaxZoom() er
+// ett globalt tak uansett — å ha to ulike per-lag-tall ville uansett vært
+// begrenset av det laveste ved lagbytte). Navnet er ikke lenger
+// "TOPO_"-spesifikt siden Esri-laget (se toppkommentaren) kom til.
+const MAX_ZOOM = 18;
 
 function initMap(){
   const map = L.map('map', {
@@ -61,15 +86,37 @@ function initMap(){
     map.remove();
     throw e;
   }
-  map.setMaxZoom(TOPO_MAX_ZOOM);
+  map.setMaxZoom(MAX_ZOOM);
 
   L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-  // Kartverket topografisk — eneste kartlag i v1 (se toppkommentaren).
-  L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', {
-    maxZoom: TOPO_MAX_ZOOM,
+  // Kartverket topografisk — default-laget, uendret fra før lagvelgeren
+  // kom til (se toppkommentaren).
+  const topo = L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', {
+    maxZoom: MAX_ZOOM,
     attribution: '&copy; Kartverket'
   }).addTo(map);
+
+  // Esri World Imagery — gratis/tokenfri satellittvisning, se
+  // toppkommentaren for hvorfor dette (ikke Kartverkets eget flyfoto) ble
+  // valgt. IKKE lagt til på kartet by default — kun tilgjengelig via
+  // lagvelgeren under, samme "topo er default"-oppførsel som Bondøya.
+  const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: MAX_ZOOM,
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community'
+  });
+
+  // bottomleft: Leafletes standard topright/bottomright kolliderer med
+  // appens egne topplinje-knapper og GPS/zoom-knappene — bottomleft er
+  // ledig (samme plassvalg som Bondøyas layersControl). Ingen
+  // innlogget/uinnlogget-gate her (til forskjell fra Bondøyas Mapbox-lag,
+  // som er sesjonsbeskyttet fordi det koster penger per flis) — begge
+  // lagene her er gratis og åpne uansett innloggingsstatus.
+  L.control.layers(
+    { 'Kartverket (terreng)': topo, 'Esri (satellitt)': satellite },
+    {},
+    { position: 'bottomleft' }
+  ).addTo(map);
 
   const sonerLayer = L.layerGroup().addTo(map);
   const findsLayer = L.layerGroup().addTo(map);
@@ -99,8 +146,11 @@ function initMap(){
   };
   locateBtn.addTo(map);
 
-  // Ingen innlogget/uinnlogget kartlag-forskjell i Ramme (ingen offentlig
-  // lag, ingen Mapbox-lagvelger) — settInnloggingsstatus() beholdes som en
+  // OPPDATERT 2026-08-29: Ramme HAR nå en lagvelger (se toppkommentaren),
+  // men fortsatt ingen innlogget/uinnlogget kartlag-forskjell — begge
+  // lagene (Kartverket topo, Esri satellitt) er gratis og åpne uansett
+  // innloggingsstatus, til forskjell fra Bondøyas betalte Mapbox-lag som
+  // faktisk trenger denne sjekken. settInnloggingsstatus() beholdes som en
   // no-op-funksjon kun for å holde samme kall-kontrakt som app.js allerede
   // bruker (renderAccountPanel() kaller den ubetinget).
   function settInnloggingsstatus(){ /* ingen lagbytte nødvendig i Ramme */ }

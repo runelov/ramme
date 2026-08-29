@@ -117,11 +117,18 @@ avgrensninger tatt under selve implementasjonen for å holde et 3-4-ukers
 engangsseminar-prosjekt forholdsmessig — samme "skaler med risiko, ikke med
 skjema"-prinsipp som resten av produktløypa:
 
-- **Ingen Mapbox-satellittkartlag/flis-proxy.** Kun Kartverkets gratis,
-  tokenfrie topografiske kart. Bondøyas `worker/api/src/routes/tiles.js`
-  er IKKE forket. Enkel å legge til igjen senere (bruk Bondøyas fil som
-  mal) hvis produkteier ønsker satellittvisning — krever en Mapbox-konto/
-  -token.
+- **Ingen Mapbox-satellittkartlag/flis-proxy.** Bondøyas
+  `worker/api/src/routes/tiles.js` er IKKE forket — ingen egen backend-rute
+  eller Mapbox-konto/-token trengs. **Oppdatert 2026-08-29**: en
+  satellittvisning ble likevel lagt til (produkteier savnet lagvelgeren fra
+  Bondøya), men med **Esri World Imagery** i stedet for Mapbox eller
+  Kartverkets eget flyfoto — verifisert at ingen av Kartverkets egne
+  tjenester (`cache.kartverket.no`, `tilecache.norgeibilder.no`,
+  `wms.geonorge.no/skwms1/wms.nib*`) faktisk er åpne/tokenfrie for flyfoto,
+  se `js/map.js` sin toppkommentar for hele undersøkelsen. `L.control.layers`
+  (bottomleft) lar brukeren bytte mellom Kartverket topografisk (default)
+  og Esri satellitt — begge gratis, ingen innloggingssjekk nødvendig
+  (til forskjell fra Bondøyas betalte, sesjonsbeskyttede Mapbox-lag).
 - **Ingen artsomtale/Wikipedia-integrasjon** (Bondøyas `arter_metadata`-
   tabell, `lib/wikipedia.js`, admin-panelets "artsomtale"-fane). Artsdetalj-
   visningen viser art/rødliste/registrering, ikke en fritekstbeskrivelse.

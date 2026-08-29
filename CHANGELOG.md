@@ -5,6 +5,33 @@ Versjonsnummereringen starter på nytt fra `0.1.0` her — Ramme er en egen,
 uavhengig repo-historie fra forgreningstidspunktet, følger ikke videre på
 Bondøyas løpende versjonsnummer (se CLAUDE.md).
 
+## 0.1.14 — Lagvelger for kartet: Kartverket topo ↔ Esri satellitt
+
+Produkteier savnet lagvelgeren fra Bondøyas kart nede til venstre. Den har
+aldri eksistert i Ramme — bevisst kuttet ved forgreningen (kun ett
+kartlag, ingen Mapbox). CSS-en for `.leaflet-control-layers` fantes
+derimot allerede i `css/styles.css` fra design-gjennomgangen 28.08, uten
+at noen kontroll noensinne ble lagt til i `js/map.js` — død kode inntil nå.
+
+Undersøkte grundig om Kartverket selv har et gratis, tokenfritt
+flyfoto-lag før noe ble bygget (se `js/map.js` sin toppkommentar for full
+verifisering): **nei** — `cache.kartverket.no` har kun topo/topograatone/
+toporaster/sjøkartraster, den faktiske flyfoto-tjenesten
+(`tilecache.norgeibilder.no`) krever en Bearer-token, og den eldre
+WMS-varianten (`wms.geonorge.no/skwms1/wms.nib*`) er IP-hvitelistet for
+Norge digitalt-partnere. Endte på **Esri World Imagery** i stedet — ekte
+gratis/tokenfri global satellittjeneste, verifisert med et faktisk
+flis-kall over Ramme sin egen posisjon før den ble bygget inn.
+
+- `L.control.layers` (bottomleft, samme plassering som Bondøya) lar
+  brukeren bytte mellom "Kartverket (terreng)" (default) og
+  "Esri (satellitt)". Ingen innloggingssjekk (til forskjell fra Bondøyas
+  betalte Mapbox-lag) — begge lagene er gratis og åpne uansett.
+- Verifisert visuelt (ekte Leaflet + ekte `css/styles.css`, lokal server):
+  lagvelger-ikonet matcher zoom-/GPS-knappenes stil, utvidet liste viser
+  begge alternativene korrekt, bytte til Esri viser faktisk satellittbilde
+  med riktig attribution.
+
 ## 0.1.13 — A2HS-tilbudet så ut som en blobbete sirkel i stedet for et kort
 
 Produkteier viste et skjermbilde fra ekte iOS Safari: "legg til på
