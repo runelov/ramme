@@ -5,6 +5,29 @@ Versjonsnummereringen starter på nytt fra `0.1.0` her — Ramme er en egen,
 uavhengig repo-historie fra forgreningstidspunktet, følger ikke videre på
 Bondøyas løpende versjonsnummer (se CLAUDE.md).
 
+## (ingen versjonsbump) — v0.1.11-fiksen var aldri faktisk deployet
+
+Produkteier rapporterte at "Ikke innlogget" fortsatt kom rett etter en
+frisk pålogging, i vanlig mobil-Safari — altså at v0.1.11-fiksen (og
+dermed v0.1.12s feilsynliggjøring) ikke hjalp i det hele tatt.
+
+**Rotårsak (min feil, ikke en kodebug)**: `git push` publiserer den
+statiske appen automatisk via GitHub Pages, men **Cloudflare Workeren gjør
+ikke det** — `worker/api` ble aldri kjørt gjennom `wrangler deploy` etter
+v0.1.11s kodeendringer. Bekreftet direkte: `OPTIONS /funn` mot produksjon
+viste fortsatt den GAMLE CORS-headeren (`Access-Control-Allow-Headers:
+Content-Type`, uten `Authorization`) time etter at v0.1.11 var committet.
+Frontend sendte altså riktig `Authorization`-header hele tiden — Workeren
+visste bare ikke om den ennå, så `/auth/registrer` ga aldri noe
+`sesjonToken` tilbake, og alt falt tilbake til den (Safari-blokkerte)
+cookien.
+
+**Fiks**: `npx wrangler deploy` kjørt manuelt for `worker/api`. Bekreftet
+med samme `OPTIONS`-sjekk at ny CORS-header (`Authorization` i
+Allow-Headers, `X-Sesjon-Token` i Expose-Headers) nå er live. Se README.md
+"Deploy" (ny seksjon) for at Worker-deploy alltid er et eget, manuelt steg
+— `git push` er ikke nok.
+
 ## 0.1.12 — KI-gjenkjenningsfeil var usynlig i UI-et (så ut som "ingen feilmelding")
 
 Produkteier meldte at v0.1.11 ikke løste KI-gjenkjenningen fullt ut på

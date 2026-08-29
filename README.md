@@ -53,6 +53,32 @@ Aktiver versjons-pre-commit-hooken én gang per klon:
 git config core.hooksPath .githooks
 ```
 
+## Deploy
+
+**REELL FEIL 2026-08-28/29** (se CHANGELOG.md v0.1.11/v0.1.12 og
+arkitektur.md ADR 15): en sesjonsfiks ble committet og pushet til `main`,
+men bugen den skulle løse besto — fordi worker-koden aldri faktisk ble
+deployet til Cloudflare. Årsaken er lett å tråkke i: **den statiske appen
+(GitHub Pages) publiseres automatisk ved `git push`, men Workerne gjør
+IKKE det** — `git push` alene endrer ingenting i produksjon for
+`worker/api`/`worker/ki-proxy`. Ingen GitHub Actions-workflow finnes for
+dette (sjekket eksplisitt — ingen `.github/`-mappe i repoet).
+
+Etter ENHVER endring i `worker/api/src/**` eller `worker/ki-proxy/src/**`,
+kjør den tilhørende deploy-kommandoen manuelt — `git push` er ikke nok:
+
+```bash
+cd ramme-workspace/ramme/worker/api && npx wrangler deploy
+cd ramme-workspace/ramme/worker/ki-proxy && npx wrangler deploy   # kun hvis DEN endret seg
+```
+
+Rask sanity-sjekk etter deploy (bekrefter ny kode faktisk kjører, uten
+side effekter i produksjonsdata) — CORS-preflighten avslører versjonen:
+
+```bash
+curl -sD - -o /dev/null -X OPTIONS https://ramme-api.bondoya.workers.dev/funn | grep -i access-control
+```
+
 ### Opprette den første admin-brukeren
 
 **Rettet v0.1.4** (var en reell bug — se CHANGELOG.md og arkitektur.md
