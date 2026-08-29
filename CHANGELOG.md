@@ -5,6 +5,26 @@ Versjonsnummereringen starter på nytt fra `0.1.0` her — Ramme er en egen,
 uavhengig repo-historie fra forgreningstidspunktet, følger ikke videre på
 Bondøyas løpende versjonsnummer (se CLAUDE.md).
 
+## 0.1.13 — A2HS-tilbudet så ut som en blobbete sirkel i stedet for et kort
+
+Produkteier viste et skjermbilde fra ekte iOS Safari: "legg til på
+hjemskjerm"-tilbudet var en nesten sirkulær hvit boble med teksten klemt
+inn og ✕-knappen løst hengende under, i stedet for et lesbart kort.
+
+**Rotårsak**: `.a2hsBanner` sin `border-radius: 999px` (en "pille") ble
+designet for den KORTE Android/generiske teksten
+("📲 Legg til Ramme på hjemskjermen for rask tilgang."). iOS-varianten
+(`wireA2HS()` sin lengre Del-ikon-forklaring) er mye lengre og pakkes over
+flere linjer — en pille-radius på en boks som blir høyere enn bred gir
+nøyaktig den blobbete sirkelen skjermbildet viste, med ✕-knappen
+tvunget ned på en egen sentrert rad av `flex-wrap`.
+
+**Fiks**: erstattet pille-formen med et vanlig avrundet kort (samme
+`--radius-lg` som bunn-arkene bruker), kolonne-layout i stedet for
+rad-med-wrap, og ✕-knappen absolutt plassert øverst til høyre i stedet
+for i flyten. Verifisert visuelt (før/etter, side om side) med en isolert
+kopi av markup+CSS — ikke i ekte iOS Safari (ingen tilgang til enhet).
+
 ## (ingen versjonsbump) — v0.1.11-fiksen var aldri faktisk deployet
 
 Produkteier rapporterte at "Ikke innlogget" fortsatt kom rett etter en
