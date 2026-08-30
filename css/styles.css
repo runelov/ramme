@@ -166,6 +166,25 @@ body{
    #map sin container har alltid `leaflet-touch`-klassen i denne appen
    (mobil/felt-først), så denne touch-regelen er alltid aktiv, ikke et
    sjeldent skjermstørrelse-tilfelle. */
+/* RETTET 2026-08-30 — REELL VISUELL BUG, sett i faktisk mobil-Safari
+   (vanlig fane, ikke installert PWA): Leaflets egne .leaflet-bottom-
+   hjørner ankres til bunnen av #map, som har `inset: 0` (fyller HELE
+   layout-viewporten) — uten noe hensyn til --safe-bottom eller
+   --browser-chrome-bottom slik alle app-ens EGNE faste bunn-elementer
+   (FAB, bunn-ark, A2HS-kortet) allerede har. I vanlig nettleser-modus,
+   der Safaris eget bunn-krom dekker en del av dette, endte
+   lagvelger-ikonet (ENESTE kontroll i bottomleft — ingen andre å stable
+   oppå) helt nede ved selve skjermkanten, synlig lavere enn
+   zoom/GPS-klyngen i bottomright (som har tre stablede kontroller og
+   derfor når høyere opp uansett, men hvis BUNNSTE knapp der ville vist
+   nøyaktig samme problem). Løsning: løft BEGGE bunn-hjørnene likt med
+   samme mål som resten av appen bruker — en uniform justering, ikke en
+   venstre-spesifikk lapp, så den relative plasseringen mellom hjørnene
+   er uendret. */
+.leaflet-bottom{
+  bottom: calc(var(--safe-bottom) + var(--browser-chrome-bottom));
+}
+
 .leaflet-bar{
   border: none !important;
   box-shadow: none !important;

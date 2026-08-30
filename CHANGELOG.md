@@ -5,6 +5,30 @@ Versjonsnummereringen starter på nytt fra `0.1.0` her — Ramme er en egen,
 uavhengig repo-historie fra forgreningstidspunktet, følger ikke videre på
 Bondøyas løpende versjonsnummer (se CLAUDE.md).
 
+## 0.1.15 — Kartkontrollene hang for lavt i vanlig mobil-Safari
+
+Produkteier viste et skjermbilde: lagvelger-ikonet (nede til venstre)
+hang synlig lenger ned enn zoom-/GPS-klyngen (nede til høyre).
+
+**Rotårsak**: `#map` har `inset: 0` — fyller HELE layout-viewporten, uten
+hensyn til `--safe-bottom`/`--browser-chrome-bottom` slik appens EGNE
+faste bunn-elementer (FAB, bunn-ark, A2HS-kortet) allerede har. Leaflets
+egne `.leaflet-bottom`-hjørner ankres derfor til `bottom: 0` av DEN fulle
+høyden — i vanlig Safari-fane (ikke installert PWA), der Safaris eget
+bunn-krom dekker en del av dette, endte lagvelgeren (eneste kontroll i
+det hjørnet, ingenting å stable oppå) helt nede ved den reelle
+skjermkanten. Zoom-/GPS-klyngen (tre stablede kontroller) så mindre
+rammet ut fordi stablingen løftet de ØVRE knappene høyere uansett — men
+den NEDERSTE knappen der hadde nøyaktig samme problem, bare mindre synlig.
+
+**Fiks**: én ny regel, `.leaflet-bottom{ bottom: calc(var(--safe-bottom)
++ var(--browser-chrome-bottom)); }` — løfter BEGGE bunn-hjørnene likt
+(uniform justering, ikke en venstre-spesifikk lapp), samme mål som resten
+av appen allerede bruker. Verifisert med en isolert kopi av ekte
+Leaflet+CSS og en simulert 60px "Safari-krom"-sone: uten fiksen havnet
+lagvelgeren og den nederste zoom-knappen inni sonen; med fiksen løftes
+begge tydelig over.
+
 ## 0.1.14 — Lagvelger for kartet: Kartverket topo ↔ Esri satellitt
 
 Produkteier savnet lagvelgeren fra Bondøyas kart nede til venstre. Den har

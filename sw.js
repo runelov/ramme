@@ -10,17 +10,17 @@
 // versjonen fra forgreningstidspunktet — verifisert direkte her, ikke bare
 // antatt.
 
-const CACHE_NAME = 'ramme-shell-v0.1.14';
+const CACHE_NAME = 'ramme-shell-v0.1.15';
 const SHELL_FILES = [
   './',
   './index.html',
   './manifest.json',
-  './css/styles.css?v=0.1.14',
-  './js/app.js?v=0.1.14',
-  './js/api-client.js?v=0.1.14',
-  './js/offline-queue.js?v=0.1.14',
-  './js/ki-client.js?v=0.1.14',
-  './js/map.js?v=0.1.14',
+  './css/styles.css?v=0.1.15',
+  './js/app.js?v=0.1.15',
+  './js/api-client.js?v=0.1.15',
+  './js/offline-queue.js?v=0.1.15',
+  './js/ki-client.js?v=0.1.15',
+  './js/map.js?v=0.1.15',
   './data/species.json',
   './icons/icon-192.png',
   './icons/icon-512.png'
